@@ -1,1 +1,230 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>TopHost — Tocá el timbre. Demostrá que sabés.</title>
+<style>
+  :root {
+    --color-reservas: #E8784A;
+    --color-aircover: #4CC3E8;
+    --color-contenido: #F5DE50;
+    --color-comunicacion: #9B63C2;
+    --color-precios: #6BCB6B;
+    --color-actualizaciones: #E6A0E3;
+    --bg: #FFFFFF;
+    --ink: #111111;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header { text-align: center; padding: 20px 16px 8px; }
+  header h1 { font-size: 24px; }
+  header p { font-size: 12px; color: #777; margin-top: 2px; }
+  #hud { display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; font-size: 14px; }
+  #hud .lives { font-size: 16px; }
+  main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; gap: 16px; }
+  .ding { font-size: 56px; text-align: center; }
+  #wheel-wrap { position: relative; width: 260px; height: 260px; }
+  #wheel { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: transform 3.2s cubic-bezier(0.17, 0.67, 0.35, 1); }
+  #pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 22px solid var(--ink); }
+  #spin-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--ink); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
+  #spin-btn:disabled { opacity: 0.6; }
+  .hint { font-size: 13px; color: #666; text-align: center; max-width: 300px; }
+  .category-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  #question-text { font-size: 19px; line-height: 1.35; margin: 12px 0 20px; text-align: left; width: 100%; }
+  .option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 2px solid #e5e5e5; background: #fff; text-align: left; cursor: pointer; font-size: 15px; width: 100%; }
+  .option strong { flex-shrink: 0; }
+  .option.correct { background: #DFF5DF; border-color: var(--color-precios); }
+  .option.incorrect { background: #FBE4E1; border-color: var(--color-reservas); }
+  #options-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  .explanation { text-align: left; background: #f7f7f7; border-radius: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.5; width: 100%; }
+  .primary-btn { padding: 12px 32px; border-radius: 24px; border: none; background: var(--ink); color: #fff; font-weight: 700; cursor: pointer; font-size: 15px; }
+  .streak-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; background: var(--color-contenido); font-size: 12px; font-weight: 700; }
+  #loading, #error { text-align: center; font-size: 14px; color: #777; padding: 24px; }
+</style>
+</head>
+<body>
 
+<header>
+  <h1>TopHost</h1>
+  <p>Tocá el timbre. Demostrá que sabés.</p>
+</header>
+
+<div id="hud">
+  <div class="lives" id="lives-display">❤️❤️❤️</div>
+  <div id="score-display" style="font-weight:700;">0 PTS</div>
+  <div id="streak-display"></div>
+</div>
+
+<main id="main"></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  const SUPABASE_URL = "https://entmaqfrglzlypaeatsz.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_1UcRP6Q15AO81GEmPg4TOw_HVGTGcDS";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const CATEGORIES = [
+    { id: 'reservas', name: 'Reservas y Cancelaciones', color: 'var(--color-reservas)' },
+    { id: 'aircover', name: 'AirCover y Seguridad', color: 'var(--color-aircover)' },
+    { id: 'contenido', name: 'Contenido y Publicación', color: 'var(--color-contenido)' },
+    { id: 'comunicacion', name: 'Comunicación', color: 'var(--color-comunicacion)' },
+    { id: 'precios', name: 'Precios y Visibilidad', color: 'var(--color-precios)' },
+    { id: 'actualizaciones', name: 'Actualizaciones', color: 'var(--color-actualizaciones)' }
+  ];
+
+  const FALLBACK_QUESTIONS = {
+    reservas: [{ question: '¿Cuál es la política de cancelación más flexible?', options: ['Flexible: reembolso hasta 24hs antes', 'Estricta: sin reembolso', 'Moderada: 30 días antes', 'No existen'], correct_index: 0, explanation: 'La política Flexible permite cancelar gratis hasta 24hs antes del check-in.' }],
+    aircover: [{ question: 'Un huésped daña un mueble. ¿En qué plazo debés reportarlo para AirCover?', options: ['Antes del próximo huésped', 'Dentro de los 14 días', 'Hasta 30 días después', 'No hay límite'], correct_index: 1, explanation: 'Tenés hasta 14 días post-checkout, o antes del próximo check-in, lo que ocurra primero.' }],
+    contenido: [{ question: '¿Qué debe reflejar la foto de portada de tu listing?', options: ['Una imagen genérica', 'El espacio real', 'Una foto tuya', 'Tu logo'], correct_index: 1, explanation: 'La foto de portada debe mostrar honestamente el espacio real.' }],
+    comunicacion: [{ question: '¿Qué mejora tu ranking relacionado a mensajería?', options: ['Responder rápido', 'Ignorar mensajes', 'Responder tarde', 'No afecta'], correct_index: 0, explanation: 'Airbnb favorece a quienes responden rápido.' }],
+    precios: [{ question: '¿Qué es el Smart Pricing?', options: ['Descuento fijo', 'Ajuste automático según demanda', 'Recargo obligatorio', 'Precio fijo'], correct_index: 1, explanation: 'Ajusta tarifas automáticamente según demanda y temporada.' }],
+    actualizaciones: [{ question: '¿Cada cuánto conviene revisar cambios de políticas?', options: ['Nunca', 'Periódicamente', 'Solo al crear la cuenta', 'Cada 5 años'], correct_index: 1, explanation: 'Las políticas cambian con frecuencia; conviene revisarlas seguido.' }]
+  };
+
+  let lives = 3, score = 0, streak = 0;
+  let currentCategory = null, currentQuestion = null;
+  let questionsCache = {};
+
+  const main = document.getElementById('main');
+  const livesDisplay = document.getElementById('lives-display');
+  const scoreDisplay = document.getElementById('score-display');
+  const streakDisplay = document.getElementById('streak-display');
+
+  function updateHud() {
+    livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🤍'.repeat(Math.max(3-lives,0));
+    scoreDisplay.textContent = score + ' PTS';
+    streakDisplay.textContent = streak > 0 ? '🔥 x' + streak : '';
+  }
+
+  async function fetchQuestions(categoryId) {
+    if (questionsCache[categoryId]) return questionsCache[categoryId];
+    try {
+      const { data, error } = await supabaseClient.from('questions').select('*').eq('category_id', categoryId);
+      if (error || !data || data.length === 0) throw new Error('sin datos');
+      questionsCache[categoryId] = data.map(q => ({ question: q.question, options: q.options, correct_index: q.correct_index, explanation: q.explanation }));
+    } catch (e) {
+      questionsCache[categoryId] = FALLBACK_QUESTIONS[categoryId] || [];
+    }
+    return questionsCache[categoryId];
+  }
+
+  function renderHome() {
+    const gradient = CATEGORIES.map((c, i) => {
+      const start = (i * 100) / CATEGORIES.length;
+      const end = ((i + 1) * 100) / CATEGORIES.length;
+      return `${c.color} ${start}% ${end}%`;
+    }).join(', ');
+
+    main.innerHTML = `
+      <div class="ding">🔔</div>
+      <p class="hint">¿Listo para girar? Caé en una categoría y demostrá lo que sabés.</p>
+      <div id="wheel-wrap">
+        <div id="wheel" style="background: conic-gradient(${gradient});"></div>
+        <div id="pointer"></div>
+        <button id="spin-btn">GIRAR</button>
+      </div>
+    `;
+    document.getElementById('spin-btn').addEventListener('click', spinWheel);
+  }
+
+  function spinWheel() {
+    const btn = document.getElementById('spin-btn');
+    const wheel = document.getElementById('wheel');
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    const randomIndex = Math.floor(Math.random() * CATEGORIES.length);
+    const sliceAngle = 360 / CATEGORIES.length;
+    const extraSpins = 5 * 360;
+    const targetAngle = extraSpins + (360 - randomIndex * sliceAngle - sliceAngle / 2);
+    wheel.style.transform = `rotate(${targetAngle}deg)`;
+
+    setTimeout(async () => {
+      currentCategory = CATEGORIES[randomIndex];
+      const questions = await fetchQuestions(currentCategory.id);
+      currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+      renderQuestion();
+    }, 3300);
+  }
+
+  function renderQuestion() {
+    if (!currentQuestion) {
+      main.innerHTML = `<div id="error">No hay preguntas cargadas para esta categoría todavía.</div>
+        <button class="primary-btn" onclick="renderHome()">Volver</button>`;
+      return;
+    }
+    const letters = ['A', 'B', 'C', 'D'];
+    main.innerHTML = `
+      <div style="width:100%;">
+        <span class="category-tag" style="background:${currentCategory.color}">${currentCategory.name}</span>
+        <div class="ding" style="font-size:36px; margin: 10px 0;">🔔</div>
+        <div id="question-text">${currentQuestion.question}</div>
+        <div id="options-list">
+          ${currentQuestion.options.map((opt, i) => `
+            <button class="option" data-index="${i}"><strong>${letters[i]}</strong><span>${opt}</span></button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    document.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.index)));
+    });
+  }
+
+  function handleAnswer(index) {
+    document.querySelectorAll('.option').forEach(btn => btn.style.pointerEvents = 'none');
+    const isCorrect = index === currentQuestion.correct_index;
+    document.querySelectorAll('.option').forEach((btn, i) => {
+      if (i === currentQuestion.correct_index) btn.classList.add('correct');
+      else if (i === index && !isCorrect) btn.classList.add('incorrect');
+    });
+
+    setTimeout(() => {
+      if (isCorrect) { score += 100 + streak * 20; streak += 1; }
+      else { streak = 0; lives -= 1; }
+      updateHud();
+      renderResult(isCorrect);
+    }, 500);
+  }
+
+  function renderResult(isCorrect) {
+    if (lives <= 0) { renderGameOver(); return; }
+    main.innerHTML = `
+      <div class="ding">${isCorrect ? '🔔✨' : '🔔😕'}</div>
+      <h2>${isCorrect ? '¡Correcto!' : 'Perdiste una vida'}</h2>
+      ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 Racha x${streak}</span>` : ''}
+      <div class="explanation"><strong>Por qué:</strong><p style="margin-top:6px;">${currentQuestion.explanation}</p></div>
+      <button class="primary-btn" id="continue-btn">Siguiente pregunta →</button>
+    `;
+    document.getElementById('continue-btn').addEventListener('click', renderHome);
+  }
+
+  function renderGameOver() {
+    main.innerHTML = `
+      <div class="ding">🔔💤</div>
+      <h2>Sin vidas</h2>
+      <p>Puntaje final: <strong>${score}</strong></p>
+      <button class="primary-btn" id="restart-btn">Jugar de nuevo</button>
+    `;
+    document.getElementById('restart-btn').addEventListener('click', () => {
+      lives = 3; score = 0; streak = 0;
+      updateHud();
+      renderHome();
+    });
+  }
+
+  updateHud();
+  renderHome();
+</script>
+</body>
+</html>
