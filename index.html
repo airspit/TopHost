@@ -4,82 +4,227 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
 <title>TopHost — Tocá el timbre. Demostrá que sabés.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Hanken+Grotesk:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --color-reservas: #E8784A;
-    --color-aircover: #4CC3E8;
-    --color-contenido: #F5DE50;
-    --color-comunicacion: #9B63C2;
-    --color-precios: #6BCB6B;
-    --color-actualizaciones: #E6A0E3;
+    --ink: #2B2521;
     --bg: #FFFFFF;
-    --ink: #111111;
+    --c-reservas: #E8784A;
+    --c-aircover: #6BCB6B;
+    --c-contenido: #F5DE50;
+    --c-comunicacion: #4CC3E8;
+    --c-precios: #9B63C2;
+    --c-actualizaciones: #E6A0E3;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    max-width: 480px;
+    font-family: 'Hanken Grotesk', sans-serif;
+    max-width: 420px;
     margin: 0 auto;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
-  header { text-align: center; padding: 20px 16px 8px; }
-  header h1 { font-size: 24px; }
-  header p { font-size: 12px; color: #777; margin-top: 2px; }
-  #hud { display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; font-size: 14px; }
-  #hud .lives { font-size: 16px; }
-  main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; gap: 16px; }
-  .ding { font-size: 56px; text-align: center; }
-  #wheel-wrap { position: relative; width: 260px; height: 260px; }
-  #wheel { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: transform 3.2s cubic-bezier(0.17, 0.67, 0.35, 1); }
-  #pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 22px solid var(--ink); }
-  #spin-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--ink); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
-  #spin-btn:disabled { opacity: 0.6; }
-  .hint { font-size: 13px; color: #666; text-align: center; max-width: 300px; }
-  .category-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  #question-text { font-size: 19px; line-height: 1.35; margin: 12px 0 20px; text-align: left; width: 100%; }
-  .option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 2px solid #e5e5e5; background: #fff; text-align: left; cursor: pointer; font-size: 15px; width: 100%; }
-  .option strong { flex-shrink: 0; }
-  .option.correct { background: #DFF5DF; border-color: var(--color-precios); }
-  .option.incorrect { background: #FBE4E1; border-color: var(--color-reservas); }
-  #options-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-  .explanation { text-align: left; background: #f7f7f7; border-radius: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.5; width: 100%; }
-  .primary-btn { padding: 12px 32px; border-radius: 24px; border: none; background: var(--ink); color: #fff; font-weight: 700; cursor: pointer; font-size: 15px; }
-  .streak-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; background: var(--color-contenido); font-size: 12px; font-weight: 700; }
-  #loading, #error { text-align: center; font-size: 14px; color: #777; padding: 24px; }
+  .serif { font-family: 'DM Serif Display', serif; }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px 4px;
+  }
+  header .logo { font-size: 22px; }
+
+  #hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 20px 8px;
+    font-size: 13px;
+  }
+  #hud .lives svg { width: 16px; height: 16px; }
+  #hud .score { font-weight: 700; }
+  #hud .streak {
+    background: var(--c-reservas);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 20px 24px;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .ding-svg { display: block; margin: 0 auto; }
+
+  .hint { font-size: 12px; color: rgba(43,37,33,.55); max-width: 280px; }
+
+  #wheel-wrap { position: relative; width: 230px; height: 230px; margin: 6px auto; }
+  #pointer {
+    position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+    z-index: 6; width: 0; height: 0;
+    border-left: 11px solid transparent; border-right: 11px solid transparent;
+    border-top: 20px solid var(--ink);
+  }
+  #wheel {
+    width: 230px; height: 230px; border-radius: 50%;
+    box-shadow: 0 12px 30px -8px rgba(43,37,33,.35), inset 0 0 0 6px #fff;
+    transition: transform 3.2s cubic-bezier(.15,.9,.25,1);
+  }
+  #spin-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 78px; height: 78px; border-radius: 50%; border: none;
+    background: var(--ink); color: #F2C14E;
+    font-family: 'DM Serif Display', serif; font-size: 16px; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(43,37,33,.4), inset 0 0 0 3px #F2C14E;
+  }
+  #spin-btn:disabled { opacity: 0.7; }
+
+  .category-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 8px;
+    font: 700 10px 'Space Mono', monospace; letter-spacing: 1px;
+    text-transform: uppercase; color: #fff;
+  }
+  .category-tag .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+
+  #question-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 19px; line-height: 1.25; text-align: left; width: 100%;
+  }
+
+  #options-list { width: 100%; display: flex; flex-direction: column; gap: 9px; text-align: left; }
+  .option {
+    display: flex; align-items: center; gap: 11px;
+    padding: 13px 14px; border-radius: 14px;
+    border: 2px solid rgba(43,37,33,.12); background: #fff;
+    cursor: pointer; font: 600 13px 'Hanken Grotesk';
+    width: 100%; transition: .15s;
+  }
+  .option:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-1px); }
+  .option .letter {
+    width: 26px; height: 26px; flex: none; border-radius: 8px;
+    background: #F4F4F4; display: flex; align-items: center; justify-content: center;
+    font: 700 12px 'Space Mono';
+  }
+  .option.correct { border-color: var(--c-aircover); background: #EAF8EA; }
+  .option.incorrect { border-color: var(--c-reservas); background: #FCEEE7; }
+
+  .result-tag { font: 700 12px 'Space Mono'; letter-spacing: 2px; }
+  .result-title { font-family: 'DM Serif Display', serif; font-size: 26px; margin-top: 2px; }
+
+  .streak-badge {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
+    background: var(--c-reservas); color: #fff; padding: 5px 12px;
+    border-radius: 20px; font: 700 12px 'Space Mono';
+  }
+
+  .explanation {
+    margin-top: 18px; text-align: left; background: #fff;
+    border: 1.5px solid rgba(43,37,33,.15); border-radius: 16px; padding: 16px; width: 100%;
+  }
+  .explanation .label { font: 700 10px 'Space Mono'; letter-spacing: 1px; margin-bottom: 6px; }
+  .explanation p { font: 500 13px/1.5 'Hanken Grotesk'; }
+
+  .primary-btn {
+    margin-top: 20px; width: 100%; padding: 15px; border: none; border-radius: 14px;
+    font-family: 'DM Serif Display', serif; font-size: 17px; cursor: pointer;
+    box-shadow: 0 6px 14px -4px rgba(43,37,33,.35);
+  }
+  .primary-btn.dark { background: var(--ink); color: #F2C14E; }
+  .primary-btn.correct { background: var(--c-aircover); color: #12420F; }
+
+  #hearts { display: flex; gap: 3px; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>TopHost</h1>
-  <p>Tocá el timbre. Demostrá que sabés.</p>
+  <svg class="ding-svg" width="26" height="28" viewBox="0 0 160 170" id="mini-bell-header"></svg>
+  <span class="serif" style="font-size:20px;">TopHost</span>
 </header>
 
 <div id="hud">
-  <div class="lives" id="lives-display">❤️❤️❤️</div>
-  <div id="score-display" style="font-weight:700;">0 PTS</div>
-  <div id="streak-display"></div>
+  <div class="lives" id="lives-display" style="display:flex; gap:3px;"></div>
+  <div class="score mono" id="score-display">0 PTS</div>
+  <div class="streak" id="streak-display" style="display:none;"></div>
 </div>
 
 <main id="main"></main>
 
+<!-- Definiciones SVG compartidas de Ding (campana dorada estilo 3D) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <radialGradient id="thDome" cx="38%" cy="26%" r="82%">
+    <stop offset="0%" stop-color="#FDF1C6"/><stop offset="40%" stop-color="#F3C64F"/>
+    <stop offset="80%" stop-color="#D89B2E"/><stop offset="100%" stop-color="#B67C21"/>
+  </radialGradient>
+  <linearGradient id="thRim" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#C8892B"/><stop offset="100%" stop-color="#96661C"/>
+  </linearGradient>
+  <radialGradient id="thSpec" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+    <stop offset="55%" stop-color="#fff" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="thKnob" cx="34%" cy="28%" r="82%">
+    <stop offset="0%" stop-color="#FDF1C6"/><stop offset="58%" stop-color="#EBB63F"/>
+    <stop offset="100%" stop-color="#C0821F"/>
+  </radialGradient>
+  <linearGradient id="thBase" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#4A4038"/><stop offset="100%" stop-color="#221D18"/>
+  </linearGradient>
+  <radialGradient id="thBaseTop" cx="50%" cy="28%" r="72%">
+    <stop offset="0%" stop-color="#6E6155"/><stop offset="100%" stop-color="#38302A"/>
+  </radialGradient>
+  <radialGradient id="thShadow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#2B2521" stop-opacity="0.24"/>
+    <stop offset="68%" stop-color="#2B2521" stop-opacity="0.1"/>
+    <stop offset="100%" stop-color="#2B2521" stop-opacity="0"/>
+  </radialGradient>
+  <symbol id="thBell" viewBox="0 0 160 170">
+    <ellipse cx="80" cy="150" rx="54" ry="11" fill="url(#thShadow)"/>
+    <rect x="30" y="126" width="100" height="18" rx="9" fill="url(#thBase)"/>
+    <ellipse cx="80" cy="126" rx="50" ry="10" fill="url(#thBaseTop)"/>
+    <path d="M36 126 C36 62 60 56 80 56 C100 56 124 62 124 126 Z" fill="url(#thDome)"/>
+    <ellipse cx="80" cy="124" rx="44" ry="8" fill="url(#thRim)"/>
+    <ellipse cx="61" cy="88" rx="15" ry="24" fill="url(#thSpec)" transform="rotate(-16 61 88)"/>
+    <path d="M112 74 C121 92 121 110 114 122" stroke="#FDF1C6" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <rect x="75" y="42" width="10" height="18" rx="5" fill="url(#thRim)"/>
+    <circle cx="80" cy="38" r="11" fill="url(#thKnob)"/>
+    <ellipse cx="76.5" cy="34.5" rx="3.4" ry="2.4" fill="#fff" opacity="0.7"/>
+  </symbol>
+</defs>
+</svg>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+  // ====== CONFIGURACIÓN DE SUPABASE ======
   const SUPABASE_URL = "https://entmaqfrglzlypaeatsz.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_1UcRP6Q15AO81GEmPg4TOw_HVGTGcDS";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const CATEGORIES = [
-    { id: 'reservas', name: 'Reservas y Cancelaciones', color: 'var(--color-reservas)' },
-    { id: 'aircover', name: 'AirCover y Seguridad', color: 'var(--color-aircover)' },
-    { id: 'contenido', name: 'Contenido y Publicación', color: 'var(--color-contenido)' },
-    { id: 'comunicacion', name: 'Comunicación', color: 'var(--color-comunicacion)' },
-    { id: 'precios', name: 'Precios y Visibilidad', color: 'var(--color-precios)' },
-    { id: 'actualizaciones', name: 'Actualizaciones', color: 'var(--color-actualizaciones)' }
+    { id: 'reservas', name: 'Reservas y Cancelaciones', hex: '#E8784A' },
+    { id: 'aircover', name: 'AirCover y Seguridad', hex: '#6BCB6B' },
+    { id: 'contenido', name: 'Contenido y Publicación', hex: '#F5DE50' },
+    { id: 'comunicacion', name: 'Comunicación', hex: '#4CC3E8' },
+    { id: 'precios', name: 'Precios y Visibilidad', hex: '#9B63C2' },
+    { id: 'actualizaciones', name: 'Actualizaciones', hex: '#E6A0E3' }
   ];
 
   const FALLBACK_QUESTIONS = {
@@ -91,6 +236,21 @@
     actualizaciones: [{ question: '¿Cada cuánto conviene revisar cambios de políticas?', options: ['Nunca', 'Periódicamente', 'Solo al crear la cuenta', 'Cada 5 años'], correct_index: 1, explanation: 'Las políticas cambian con frecuencia; conviene revisarlas seguido.' }]
   };
 
+  // ====== SVGs de Ding por estado de ánimo ======
+  function dingSVG(mood, size) {
+    const base = `<use href="#thBell"/>`;
+    const eyesClosed = `<ellipse cx="66" cy="97" rx="7" ry="8.5" fill="#2B2521"/><ellipse cx="94" cy="97" rx="7" ry="8.5" fill="#2B2521"/><circle cx="68.6" cy="93.4" r="2.3" fill="#fff"/><circle cx="96.6" cy="93.4" r="2.3" fill="#fff"/><path d="M72 109 Q80 117 88 109" stroke="#2B2521" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    let inner = base;
+    if (mood === 'bienvenida') inner += eyesClosed;
+    if (mood === 'correcto') inner = `<path d="M24 40 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 z" fill="#F5DE50"/><path d="M134 52 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z" fill="#4CC3E8"/>${base}<path d="M59 99 Q66 90 73 99" stroke="#2B2521" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M87 99 Q94 90 101 99" stroke="#2B2521" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="54" cy="108" rx="6" ry="4" fill="#F19B8E" opacity="0.55"/><ellipse cx="106" cy="108" rx="6" ry="4" fill="#F19B8E" opacity="0.55"/><path d="M68 107 Q80 122 92 107 Q80 115 68 107 Z" fill="#2B2521"/>`;
+    if (mood === 'incorrecto') inner = `${base}<path d="M57 88 Q64 84 71 88" stroke="#2B2521" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M89 88 Q96 84 103 88" stroke="#2B2521" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="66" cy="98" rx="6" ry="7" fill="#2B2521"/><ellipse cx="94" cy="98" rx="6" ry="7" fill="#2B2521"/><circle cx="68" cy="95" r="2" fill="#fff"/><circle cx="96" cy="95" r="2" fill="#fff"/><path d="M72 113 Q80 107 88 113" stroke="#2B2521" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+    if (mood === 'gameover') inner = `${base}<path d="M36 126 C36 62 60 56 80 56 C100 56 124 62 124 126 Z" fill="#8B8178" opacity="0.32"/><path d="M60 92 l11 11 M71 92 l-11 11" stroke="#2B2521" stroke-width="3" stroke-linecap="round"/><path d="M89 92 l11 11 M100 92 l-11 11" stroke="#2B2521" stroke-width="3" stroke-linecap="round"/><path d="M72 114 Q80 109 88 114" stroke="#2B2521" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+    return `<svg class="ding-svg" width="${size}" height="${size*1.06}" viewBox="0 0 160 170">${inner}</svg>`;
+  }
+
+  document.getElementById('mini-bell-header').outerHTML = dingSVG('bienvenida', 26);
+
+  // ====== ESTADO DEL JUEGO ======
   let lives = 3, score = 0, streak = 0;
   let currentCategory = null, currentQuestion = null;
   let questionsCache = {};
@@ -100,18 +260,33 @@
   const scoreDisplay = document.getElementById('score-display');
   const streakDisplay = document.getElementById('streak-display');
 
+  function heartSVG(filled) {
+    return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 4 Q12 2 14 2 Q17 2 17 5 Q17 8 12 11 Q7 8 7 5 Q7 2 10 2 Q12 2 12 4Z" fill="${filled ? '#E8784A' : 'rgba(43,37,33,.14)'}"/></svg>`;
+  }
+
   function updateHud() {
-    livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🤍'.repeat(Math.max(3-lives,0));
+    livesDisplay.innerHTML = [0,1,2].map(i => heartSVG(i < lives)).join('');
     scoreDisplay.textContent = score + ' PTS';
-    streakDisplay.textContent = streak > 0 ? '🔥 x' + streak : '';
+    if (streak > 0) {
+      streakDisplay.style.display = 'inline-flex';
+      streakDisplay.textContent = '🔥 x' + streak;
+    } else {
+      streakDisplay.style.display = 'none';
+    }
   }
 
   async function fetchQuestions(categoryId) {
     if (questionsCache[categoryId]) return questionsCache[categoryId];
     try {
-      const { data, error } = await supabaseClient.from('questions').select('*').eq('category_id', categoryId);
+      const { data, error } = await supabaseClient
+        .from('questions')
+        .select('*')
+        .eq('category_id', categoryId);
       if (error || !data || data.length === 0) throw new Error('sin datos');
-      questionsCache[categoryId] = data.map(q => ({ question: q.question, options: q.options, correct_index: q.correct_index, explanation: q.explanation }));
+      questionsCache[categoryId] = data.map(q => ({
+        question: q.question, options: q.options,
+        correct_index: q.correct_index, explanation: q.explanation
+      }));
     } catch (e) {
       questionsCache[categoryId] = FALLBACK_QUESTIONS[categoryId] || [];
     }
@@ -122,15 +297,16 @@
     const gradient = CATEGORIES.map((c, i) => {
       const start = (i * 100) / CATEGORIES.length;
       const end = ((i + 1) * 100) / CATEGORIES.length;
-      return `${c.color} ${start}% ${end}%`;
+      return `${c.hex} ${start}% ${end}%`;
     }).join(', ');
 
     main.innerHTML = `
-      <div class="ding">🔔</div>
-      <p class="hint">¿Listo para girar? Caé en una categoría y demostrá lo que sabés.</p>
+      ${dingSVG('bienvenida', 80)}
+      <div class="serif" style="font-size:22px;">¿Listo para girar?</div>
+      <p class="hint">Caé en una categoría y demostrá lo que sabés.</p>
       <div id="wheel-wrap">
-        <div id="wheel" style="background: conic-gradient(${gradient});"></div>
         <div id="pointer"></div>
+        <div id="wheel" style="background: conic-gradient(${gradient});"></div>
         <button id="spin-btn">GIRAR</button>
       </div>
     `;
@@ -159,19 +335,22 @@
 
   function renderQuestion() {
     if (!currentQuestion) {
-      main.innerHTML = `<div id="error">No hay preguntas cargadas para esta categoría todavía.</div>
-        <button class="primary-btn" onclick="renderHome()">Volver</button>`;
+      main.innerHTML = `<p>No hay preguntas cargadas para esta categoría todavía.</p>
+        <button class="primary-btn dark" id="back-btn">Volver</button>`;
+      document.getElementById('back-btn').addEventListener('click', renderHome);
       return;
     }
     const letters = ['A', 'B', 'C', 'D'];
     main.innerHTML = `
       <div style="width:100%;">
-        <span class="category-tag" style="background:${currentCategory.color}">${currentCategory.name}</span>
-        <div class="ding" style="font-size:36px; margin: 10px 0;">🔔</div>
+        <span class="category-tag" style="background:${currentCategory.hex}"><span class="dot"></span>${currentCategory.name}</span>
+        <div style="margin: 12px 0;">${dingSVG('bienvenida', 48)}</div>
         <div id="question-text">${currentQuestion.question}</div>
-        <div id="options-list">
+        <div id="options-list" style="margin-top:16px;">
           ${currentQuestion.options.map((opt, i) => `
-            <button class="option" data-index="${i}"><strong>${letters[i]}</strong><span>${opt}</span></button>
+            <button class="option" data-index="${i}">
+              <span class="letter">${letters[i]}</span><span>${opt}</span>
+            </button>
           `).join('')}
         </div>
       </div>
@@ -182,8 +361,9 @@
   }
 
   function handleAnswer(index) {
-    document.querySelectorAll('.option').forEach(btn => btn.style.pointerEvents = 'none');
+    document.querySelectorAll('.option').forEach(btn => btn.disabled = true);
     const isCorrect = index === currentQuestion.correct_index;
+
     document.querySelectorAll('.option').forEach((btn, i) => {
       if (i === currentQuestion.correct_index) btn.classList.add('correct');
       else if (i === index && !isCorrect) btn.classList.add('incorrect');
@@ -200,21 +380,25 @@
   function renderResult(isCorrect) {
     if (lives <= 0) { renderGameOver(); return; }
     main.innerHTML = `
-      <div class="ding">${isCorrect ? '🔔✨' : '🔔😕'}</div>
-      <h2>${isCorrect ? '¡Correcto!' : 'Perdiste una vida'}</h2>
-      ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 Racha x${streak}</span>` : ''}
-      <div class="explanation"><strong>Por qué:</strong><p style="margin-top:6px;">${currentQuestion.explanation}</p></div>
-      <button class="primary-btn" id="continue-btn">Siguiente pregunta →</button>
+      <span class="result-tag" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${isCorrect ? '¡CORRECTO!' : 'CASI...'}</span>
+      ${dingSVG(isCorrect ? 'correcto' : 'incorrecto', isCorrect ? 100 : 96)}
+      <div class="result-title">${isCorrect ? '+' + (100 + (streak-1)*20) + ' puntos' : 'Perdiste una vida'}</div>
+      ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 RACHA x${streak}</span>` : ''}
+      <div class="explanation" style="border-color:${isCorrect ? 'var(--c-aircover)' : 'var(--c-reservas)'}">
+        <div class="label" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">POR QUÉ</div>
+        <p>${currentQuestion.explanation}</p>
+      </div>
+      <button class="primary-btn ${isCorrect ? 'correct' : 'dark'}" id="continue-btn">Siguiente pregunta →</button>
     `;
     document.getElementById('continue-btn').addEventListener('click', renderHome);
   }
 
   function renderGameOver() {
     main.innerHTML = `
-      <div class="ding">🔔💤</div>
-      <h2>Sin vidas</h2>
-      <p>Puntaje final: <strong>${score}</strong></p>
-      <button class="primary-btn" id="restart-btn">Jugar de nuevo</button>
+      ${dingSVG('gameover', 100)}
+      <div class="serif" style="font-size:22px;">Sin vidas</div>
+      <p>Puntaje final: <strong class="mono">${score}</strong></p>
+      <button class="primary-btn dark" id="restart-btn">Jugar de nuevo</button>
     `;
     document.getElementById('restart-btn').addEventListener('click', () => {
       lives = 3; score = 0; streak = 0;
