@@ -34,7 +34,7 @@
 
   #hud { display: flex; justify-content: space-between; align-items: center; padding: 4px 20px 8px; font-size: 13px; }
   #hud .rating { display: flex; align-items: center; gap: 5px; font: 700 14px 'Space Mono'; }
-  #hud .lives { display: flex; gap: 3px; }
+  #hud .round-stars { display: flex; gap: 3px; }
   #hud .streak { background: var(--c-reservas); color: #fff; padding: 3px 8px; border-radius: 8px; font-weight: 700; font-size: 11px; }
 
   main {
@@ -104,9 +104,9 @@
 </header>
 
 <div id="hud" style="display:none;">
-  <div class="rating"><span id="star-icon"></span><span id="rating-display">5.00</span></div>
-  <div class="lives" id="lives-display"></div>
-  <div class="streak" id="streak-display" style="display:none;"></div>
+  <div class="rating"><span id="star-icon"></span><span id="rating-display">—</span></div>
+  <div class="mono" id="round-progress" style="font-size:12px; color:rgba(43,37,33,.55);"></div>
+  <div class="round-stars" id="round-stars-display"></div>
 </div>
 
 <main id="main"></main>
@@ -139,10 +139,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_1UcRP6Q15AO81GEmPg4TOw_HVGTGcDS";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const LIFE_REGEN_MINUTES = 1; // cada cuánto se regenera 1 corazón (etapa de pruebas)
-  const MAX_LIVES = 3;
-  const STARS_CORRECT = 5;
-  const STARS_INCORRECT = 1;
+  const ROUND_LENGTH = 5; // preguntas por partida = estrellas máximas posibles en la ronda
 
   const CATEGORIES = [
     { id: 'reservas', name: 'Reservas y Cancelaciones', hex: '#E8784A' },
@@ -245,25 +242,21 @@
   }
   document.getElementById('star-icon').innerHTML = starSVG(true, 15);
 
-  function heartSVG(filled) {
-    return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 4 Q12 2 14 2 Q17 2 17 5 Q17 8 12 11 Q7 8 7 5 Q7 2 10 2 Q12 2 12 4Z" fill="${filled ? '#E8784A' : 'rgba(43,37,33,.14)'}"/></svg>`;
-  }
-
   // ====== ESTADO ======
   let session = null;      // sesión de Supabase Auth
   let player = null;       // fila de la tabla players
-  let lives = 3, streak = 0;
-  let sessionCorrect = 0, sessionTotal = 0; // para calcular la "reseña" de esta partida
+  let roundIndex = 0;      // pregunta actual dentro de la ronda (0 a ROUND_LENGTH-1)
+  let roundCorrect = 0;    // aciertos en la ronda actual = estrellas de esta partida
+  let streak = 0;
   let currentCategory = null, currentQuestion = null;
   let questionsCache = {};
-  let regenInterval = null;
 
   const main = document.getElementById('main');
   const hud = document.getElementById('hud');
   const logoutBtn = document.getElementById('logout-btn');
-  const livesDisplay = document.getElementById('lives-display');
+  const roundProgressDisplay = document.getElementById('round-progress');
+  const roundStarsDisplay = document.getElementById('round-stars-display');
   const ratingDisplay = document.getElementById('rating-display');
-  const streakDisplay = document.getElementById('streak-display');
 
   logoutBtn.addEventListener('click', async () => {
     await supabaseClient.auth.signOut();
@@ -271,14 +264,9 @@
   });
 
   function updateHud() {
-    livesDisplay.innerHTML = Array.from({length: MAX_LIVES}, (_, i) => heartSVG(i < lives)).join('');
     ratingDisplay.textContent = player.total_reviews > 0 ? Number(player.rating).toFixed(2) : '—';
-    if (streak > 0) {
-      streakDisplay.style.display = 'inline-flex';
-      streakDisplay.textContent = '🔥 x' + streak;
-    } else {
-      streakDisplay.style.display = 'none';
-    }
+    roundProgressDisplay.textContent = `Pregunta ${Math.min(roundIndex + 1, ROUND_LENGTH)}/${ROUND_LENGTH}`;
+    roundStarsDisplay.innerHTML = Array.from({length: ROUND_LENGTH}, (_, i) => starSVG(i < roundCorrect, 15)).join('');
   }
 
   // ====== AUTH ======
@@ -289,7 +277,6 @@
       await loadOrCreatePlayer();
       hud.style.display = 'flex';
       logoutBtn.style.display = 'inline';
-      startLivesRegenLoop();
       renderHome();
     } else {
       renderLogin();
@@ -302,7 +289,6 @@
       loadOrCreatePlayer().then(() => {
         hud.style.display = 'flex';
         logoutBtn.style.display = 'inline';
-        startLivesRegenLoop();
         renderHome();
       });
     }
@@ -313,45 +299,11 @@
     let { data, error } = await supabaseClient.from('players').select('*').eq('id', uid).maybeSingle();
     if (!data) {
       const { data: created } = await supabaseClient.from('players').insert({
-        id: uid, email: session.user.email, rating: 0, total_reviews: 0,
-        lives: MAX_LIVES, next_life_at: null
+        id: uid, email: session.user.email, rating: 0, total_reviews: 0
       }).select().single();
       data = created;
     }
     player = data;
-    lives = applyLifeRegen();
-  }
-
-  function applyLifeRegen() {
-    let l = player.lives;
-    if (l >= MAX_LIVES || !player.next_life_at) return l;
-    const now = Date.now();
-    const next = new Date(player.next_life_at).getTime();
-    if (now >= next) {
-      const elapsedMin = (now - next) / 60000;
-      const regained = 1 + Math.floor(elapsedMin / LIFE_REGEN_MINUTES);
-      l = Math.min(MAX_LIVES, l + regained);
-      player.next_life_at = l >= MAX_LIVES ? null : new Date(now + LIFE_REGEN_MINUTES*60000).toISOString();
-      savePlayerLives(l, player.next_life_at);
-    }
-    return l;
-  }
-
-  async function savePlayerLives(l, nextAt) {
-    player.lives = l;
-    player.next_life_at = nextAt;
-    await supabaseClient.from('players').update({ lives: l, next_life_at: nextAt }).eq('id', player.id);
-  }
-
-  function startLivesRegenLoop() {
-    if (regenInterval) clearInterval(regenInterval);
-    regenInterval = setInterval(() => {
-      const newLives = applyLifeRegen();
-      if (newLives !== lives) {
-        lives = newLives;
-        updateHud();
-      }
-    }, 15000);
   }
 
   function renderLogin() {
@@ -434,8 +386,7 @@
   }
 
   function renderHome() {
-    if (lives <= 0) { renderNoLives(); return; }
-
+    updateHud();
     const gradient = CATEGORIES.map((c, i) => {
       const start = (i * 100) / CATEGORIES.length;
       const end = ((i + 1) * 100) / CATEGORIES.length;
@@ -455,38 +406,11 @@
     document.getElementById('spin-btn').addEventListener('click', spinWheel);
   }
 
-  function renderNoLives() {
-    const nextAt = player.next_life_at ? new Date(player.next_life_at).getTime() : null;
-    let timeLeftStr = '';
-    if (nextAt) {
-      const msLeft = Math.max(0, nextAt - Date.now());
-      const mins = Math.floor(msLeft / 60000);
-      const secs = Math.floor((msLeft % 60000) / 1000);
-      timeLeftStr = `${mins}:${secs.toString().padStart(2,'0')}`;
-    }
-    main.innerHTML = `
-      ${keeperSVG('gameover', 90)}
-      <div class="serif" style="font-size:22px;">Sin corazones</div>
-      <p class="hint">Tu próximo corazón está en camino.</p>
-      <div class="mono" style="font-size:32px; margin-top:6px;" id="countdown">${timeLeftStr}</div>
-      <p class="hint" style="margin-top:10px;">Volvé más tarde para seguir jugando.</p>
-    `;
-    const countdownEl = document.getElementById('countdown');
-    const tick = setInterval(() => {
-      lives = applyLifeRegen();
-      if (lives > 0) {
-        clearInterval(tick);
-        updateHud();
-        renderHome();
-        return;
-      }
-      if (nextAt) {
-        const msLeft = Math.max(0, nextAt - Date.now());
-        const mins = Math.floor(msLeft / 60000);
-        const secs = Math.floor((msLeft % 60000) / 1000);
-        countdownEl.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
-      }
-    }, 1000);
+  function startNewRound() {
+    roundIndex = 0;
+    roundCorrect = 0;
+    streak = 0;
+    renderHome();
   }
 
   function spinWheel() {
@@ -534,7 +458,7 @@
     });
   }
 
-  async function handleAnswer(index) {
+  function handleAnswer(index) {
     document.querySelectorAll('.option').forEach(btn => btn.disabled = true);
     const isCorrect = index === currentQuestion.correct_index;
 
@@ -543,76 +467,72 @@
       else if (i === index && !isCorrect) btn.classList.add('incorrect');
     });
 
-    sessionTotal += 1;
-    if (isCorrect) sessionCorrect += 1;
+    if (isCorrect) { roundCorrect += 1; streak += 1; } else { streak = 0; }
+    roundIndex += 1;
+    updateHud();
 
-    // Cada respuesta es como una "reseña": actualizamos el rating en el momento
-    const stars = isCorrect ? STARS_CORRECT : STARS_INCORRECT;
-    const oldRating = Number(player.rating);
-    const oldReviews = player.total_reviews;
-    const newReviews = oldReviews + 1;
-    const newRating = ((oldRating * oldReviews) + stars) / newReviews;
-    const ratingDelta = oldReviews > 0 ? newRating - oldRating : 0;
-
-    player.rating = newRating;
-    player.total_reviews = newReviews;
-    await supabaseClient.from('players').update({ rating: newRating, total_reviews: newReviews }).eq('id', player.id);
-
-    setTimeout(async () => {
-      if (isCorrect) {
-        streak += 1;
-      } else {
-        streak = 0;
-        lives -= 1;
-        await savePlayerLives(lives, lives < MAX_LIVES && !player.next_life_at ? new Date(Date.now() + LIFE_REGEN_MINUTES*60000).toISOString() : player.next_life_at);
-      }
-      updateHud();
-      renderResult(isCorrect, stars, ratingDelta);
+    setTimeout(() => {
+      renderResult(isCorrect);
     }, 500);
   }
 
-  function renderResult(isCorrect, stars, ratingDelta) {
-    const deltaClass = ratingDelta >= 0 ? 'up' : 'down';
-    const deltaSign = ratingDelta >= 0 ? '+' : '';
-    const showDelta = player.total_reviews > 1; // recién a partir de la 2da reseña hay "delta" real
-
-    if (lives <= 0) { renderGameOverScreen(); return; }
+  function renderResult(isCorrect) {
+    const isLastQuestion = roundIndex >= ROUND_LENGTH;
 
     main.innerHTML = `
       <span class="result-tag" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${isCorrect ? '¡CORRECTO!' : 'CASI...'}</span>
       ${keeperSVG(isCorrect ? (streak > 1 ? 'racha' : 'correcto') : 'incorrecto', isCorrect ? 100 : 96)}
-      <div class="stars-row">${Array.from({length:5}, (_,i) => starSVG(i < stars, 18)).join('')}</div>
       ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 RACHA x${streak}</span>` : ''}
       <div class="explanation" style="border-color:${isCorrect ? 'var(--c-aircover)' : 'var(--c-reservas)'}">
         <div class="label" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">POR QUÉ</div>
         <p>${currentQuestion.explanation}</p>
       </div>
-      <div class="mono" style="font-size:13px; margin-top:10px;">
-        Rating: ${Number(player.rating).toFixed(2)}
-        ${showDelta ? `<span class="rating-delta ${deltaClass}">(${deltaSign}${ratingDelta.toFixed(2)})</span>` : ''}
-      </div>
-      <button class="primary-btn ${isCorrect ? 'correct' : 'dark'}" id="continue-btn">Siguiente pregunta →</button>
+      <button class="primary-btn ${isCorrect ? 'correct' : 'dark'}" id="continue-btn">${isLastQuestion ? 'Ver resultado de la partida →' : 'Siguiente pregunta →'}</button>
     `;
-    document.getElementById('continue-btn').addEventListener('click', renderHome);
+    document.getElementById('continue-btn').addEventListener('click', () => {
+      if (isLastQuestion) {
+        finishRound();
+      } else {
+        renderHome();
+      }
+    });
   }
 
-  function renderGameOverScreen() {
+  // ====== FIN DE PARTIDA: la ronda completa es la "reseña" (0 a ROUND_LENGTH estrellas) ======
+  async function finishRound() {
+    const roundStars = roundCorrect; // 0 a 5, una estrella por pregunta acertada
+    const oldRating = Number(player.rating);
+    const oldRounds = player.total_reviews;
+    const newRounds = oldRounds + 1;
+    const newRating = ((oldRating * oldRounds) + roundStars) / newRounds;
+    const ratingDelta = oldRounds > 0 ? newRating - oldRating : 0;
+
+    player.rating = newRating;
+    player.total_reviews = newRounds;
+    await supabaseClient.from('players').update({ rating: newRating, total_reviews: newRounds }).eq('id', player.id);
+
+    const deltaClass = ratingDelta >= 0 ? 'up' : 'down';
+    const deltaSign = ratingDelta >= 0 ? '+' : '';
+    const showDelta = oldRounds > 0;
+
+    const pose = roundStars >= 4 ? 'nivel' : (roundStars === 0 ? 'incorrecto' : 'correcto');
+
     main.innerHTML = `
-      ${keeperSVG('gameover', 90)}
-      <div class="serif" style="font-size:22px;">Sin corazones</div>
-      <div class="mono" style="font-size:15px;">${sessionCorrect} / ${sessionTotal} correctas esta partida</div>
+      ${keeperSVG(pose, 100)}
+      <div class="serif" style="font-size:22px;">Fin de la partida</div>
+      <div class="stars-row">${Array.from({length: ROUND_LENGTH}, (_,i) => starSVG(i < roundStars, 24)).join('')}</div>
+      <div class="mono" style="font-size:14px;">${roundCorrect} / ${ROUND_LENGTH} correctas</div>
       <div class="explanation" style="text-align:center;">
         <div class="label">TU RATING GENERAL</div>
-        <div class="mono" style="font-size:26px; margin-top:4px;">${Number(player.rating).toFixed(2)}</div>
-        <p style="margin-top:6px;">Basado en ${player.total_reviews} ${player.total_reviews === 1 ? 'respuesta' : 'respuestas'}.</p>
+        <div class="mono" style="font-size:28px; margin-top:4px;">
+          ${newRating.toFixed(2)}
+          ${showDelta ? `<span class="rating-delta ${deltaClass}">(${deltaSign}${ratingDelta.toFixed(2)})</span>` : ''}
+        </div>
+        <p style="margin-top:6px;">Basado en ${newRounds} ${newRounds === 1 ? 'partida' : 'partidas'}.</p>
       </div>
-      <button class="primary-btn dark" id="ok-btn">Continuar</button>
+      <button class="primary-btn dark" id="again-btn">Jugar de nuevo</button>
     `;
-    document.getElementById('ok-btn').addEventListener('click', () => {
-      sessionCorrect = 0; sessionTotal = 0; streak = 0;
-      updateHud();
-      renderHome();
-    });
+    document.getElementById('again-btn').addEventListener('click', startNewRound);
   }
 
   init();
