@@ -97,7 +97,7 @@
 
 <header>
   <div class="brand">
-    <svg class="ding-svg" width="26" height="28" viewBox="0 0 160 170" id="mini-bell-header"></svg>
+    <svg class="ding-svg" width="26" height="32" viewBox="0 0 170 210" id="mini-bell-header"></svg>
     <span class="serif" style="font-size:20px;">TopHost</span>
   </div>
   <button class="logout" id="logout-btn" style="display:none;">Salir</button>
@@ -113,24 +113,22 @@
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
-  <radialGradient id="thDome" cx="38%" cy="26%" r="82%"><stop offset="0%" stop-color="#FDF1C6"/><stop offset="40%" stop-color="#F3C64F"/><stop offset="80%" stop-color="#D89B2E"/><stop offset="100%" stop-color="#B67C21"/></radialGradient>
-  <linearGradient id="thRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8892B"/><stop offset="100%" stop-color="#96661C"/></linearGradient>
-  <radialGradient id="thSpec" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff" stop-opacity="0.9"/><stop offset="55%" stop-color="#fff" stop-opacity="0.18"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
-  <radialGradient id="thKnob" cx="34%" cy="28%" r="82%"><stop offset="0%" stop-color="#FDF1C6"/><stop offset="58%" stop-color="#EBB63F"/><stop offset="100%" stop-color="#C0821F"/></radialGradient>
-  <linearGradient id="thBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A4038"/><stop offset="100%" stop-color="#221D18"/></linearGradient>
-  <radialGradient id="thBaseTop" cx="50%" cy="28%" r="72%"><stop offset="0%" stop-color="#6E6155"/><stop offset="100%" stop-color="#38302A"/></radialGradient>
-  <radialGradient id="thShadow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2B2521" stop-opacity="0.24"/><stop offset="68%" stop-color="#2B2521" stop-opacity="0.1"/><stop offset="100%" stop-color="#2B2521" stop-opacity="0"/></radialGradient>
-  <symbol id="thBell" viewBox="0 0 160 170">
-    <ellipse cx="80" cy="150" rx="54" ry="11" fill="url(#thShadow)"/>
-    <rect x="30" y="126" width="100" height="18" rx="9" fill="url(#thBase)"/>
-    <ellipse cx="80" cy="126" rx="50" ry="10" fill="url(#thBaseTop)"/>
-    <path d="M36 126 C36 62 60 56 80 56 C100 56 124 62 124 126 Z" fill="url(#thDome)"/>
-    <ellipse cx="80" cy="124" rx="44" ry="8" fill="url(#thRim)"/>
-    <ellipse cx="61" cy="88" rx="15" ry="24" fill="url(#thSpec)" transform="rotate(-16 61 88)"/>
-    <path d="M112 74 C121 92 121 110 114 122" stroke="#FDF1C6" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
-    <rect x="75" y="42" width="10" height="18" rx="5" fill="url(#thRim)"/>
-    <circle cx="80" cy="38" r="11" fill="url(#thKnob)"/>
-    <ellipse cx="76.5" cy="34.5" rx="3.4" ry="2.4" fill="#fff" opacity="0.7"/>
+  <radialGradient id="k2Shadow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2B2521" stop-opacity="0.2"/><stop offset="70%" stop-color="#2B2521" stop-opacity="0.07"/><stop offset="100%" stop-color="#2B2521" stop-opacity="0"/></radialGradient>
+  <linearGradient id="k2Rubber" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5A5A60"/><stop offset="52%" stop-color="#35353B"/><stop offset="100%" stop-color="#222228"/></linearGradient>
+  <linearGradient id="k2Silver" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F5F5F7"/><stop offset="35%" stop-color="#DBDDE1"/><stop offset="72%" stop-color="#B6B8BE"/><stop offset="100%" stop-color="#CCCED2"/></linearGradient>
+  <linearGradient id="k2Shackle" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#70707A"/><stop offset="45%" stop-color="#3C3C42"/><stop offset="100%" stop-color="#171719"/></linearGradient>
+  <linearGradient id="k2Wheel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EFEFF1"/><stop offset="50%" stop-color="#ABABB0"/><stop offset="100%" stop-color="#DADAE0"/></linearGradient>
+  <linearGradient id="k2Arm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#42424A"/><stop offset="100%" stop-color="#242429"/></linearGradient>
+  <linearGradient id="k2Gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FCE9A6"/><stop offset="48%" stop-color="#E8B23C"/><stop offset="100%" stop-color="#B77E1E"/></linearGradient>
+  <symbol id="k2Body" viewBox="0 0 170 210">
+    <ellipse cx="85" cy="200" rx="50" ry="9" fill="url(#k2Shadow)"/>
+    <ellipse cx="70" cy="193" rx="11" ry="7" fill="#26262B"/><ellipse cx="100" cy="193" rx="11" ry="7" fill="#26262B"/>
+    <path d="M62 66 C62 22 108 22 108 66" fill="none" stroke="url(#k2Shackle)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M67 60 C67 30 86 26 96 28" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.22"/>
+    <rect x="34" y="58" width="102" height="130" rx="34" fill="url(#k2Rubber)"/>
+    <rect x="40" y="62" width="90" height="30" rx="20" fill="#fff" opacity="0.07"/>
+    <rect x="48" y="74" width="74" height="102" rx="22" fill="url(#k2Silver)" stroke="#909298" stroke-width="1"/>
+    <ellipse cx="66" cy="100" rx="12" ry="24" fill="#fff" opacity="0.3" transform="rotate(-18 66 100)"/>
   </symbol>
 </defs>
 </svg>
@@ -164,17 +162,82 @@
     actualizaciones: [{ question: '¿Cada cuánto conviene revisar cambios de políticas?', options: ['Nunca', 'Periódicamente', 'Solo al crear la cuenta', 'Cada 5 años'], correct_index: 1, explanation: 'Las políticas cambian con frecuencia; conviene revisarlas seguido.' }]
   };
 
-  function dingSVG(mood, size) {
-    const base = `<use href="#thBell"/>`;
-    const eyesClosed = `<ellipse cx="66" cy="97" rx="7" ry="8.5" fill="#2B2521"/><ellipse cx="94" cy="97" rx="7" ry="8.5" fill="#2B2521"/><circle cx="68.6" cy="93.4" r="2.3" fill="#fff"/><circle cx="96.6" cy="93.4" r="2.3" fill="#fff"/><path d="M72 109 Q80 117 88 109" stroke="#2B2521" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
-    let inner = base;
-    if (mood === 'bienvenida') inner += eyesClosed;
-    if (mood === 'correcto') inner = `<path d="M24 40 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 z" fill="#F5DE50"/><path d="M134 52 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z" fill="#4CC3E8"/>${base}<path d="M59 99 Q66 90 73 99" stroke="#2B2521" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M87 99 Q94 90 101 99" stroke="#2B2521" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="54" cy="108" rx="6" ry="4" fill="#F19B8E" opacity="0.55"/><ellipse cx="106" cy="108" rx="6" ry="4" fill="#F19B8E" opacity="0.55"/><path d="M68 107 Q80 122 92 107 Q80 115 68 107 Z" fill="#2B2521"/>`;
-    if (mood === 'incorrecto') inner = `${base}<path d="M57 88 Q64 84 71 88" stroke="#2B2521" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M89 88 Q96 84 103 88" stroke="#2B2521" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="66" cy="98" rx="6" ry="7" fill="#2B2521"/><ellipse cx="94" cy="98" rx="6" ry="7" fill="#2B2521"/><circle cx="68" cy="95" r="2" fill="#fff"/><circle cx="96" cy="95" r="2" fill="#fff"/><path d="M72 113 Q80 107 88 113" stroke="#2B2521" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
-    if (mood === 'gameover') inner = `${base}<path d="M36 126 C36 62 60 56 80 56 C100 56 124 62 124 126 Z" fill="#8B8178" opacity="0.32"/><path d="M60 92 l11 11 M71 92 l-11 11" stroke="#2B2521" stroke-width="3" stroke-linecap="round"/><path d="M89 92 l11 11 M100 92 l-11 11" stroke="#2B2521" stroke-width="3" stroke-linecap="round"/><path d="M72 114 Q80 109 88 114" stroke="#2B2521" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
-    return `<svg class="ding-svg" width="${size}" height="${size*1.06}" viewBox="0 0 160 170">${inner}</svg>`;
+  // ====== Keeper: candado-mascota, "un personaje, muchas caras" ======
+  function keeperSVG(pose, size) {
+    const body = `<use href="#k2Body"/>`;
+    const h = Math.round(size * (210/170));
+    let inner = '';
+
+    if (pose === 'bienvenida') {
+      inner = `
+        <path d="M36 124 Q22 130 26 142" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="27" cy="143" r="6" fill="#2A2A30"/>
+        <path d="M134 122 Q150 114 148 98" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="148" cy="97" r="6" fill="#2A2A30"/>
+        ${body}
+        <circle cx="71" cy="110" r="12" fill="#fff" stroke="#C7C9CE" stroke-width="1"/><circle cx="99" cy="110" r="12" fill="#fff" stroke="#C7C9CE" stroke-width="1"/>
+        <circle cx="73" cy="112" r="6" fill="#232326"/><circle cx="101" cy="112" r="6" fill="#232326"/><circle cx="75.5" cy="109.5" r="2.1" fill="#fff"/><circle cx="103.5" cy="109.5" r="2.1" fill="#fff"/>
+        <ellipse cx="55" cy="130" rx="6" ry="4" fill="#F19B8E" opacity="0.55"/><ellipse cx="115" cy="130" rx="6" ry="4" fill="#F19B8E" opacity="0.55"/>
+        <rect x="62" y="140" width="46" height="20" rx="10" fill="#1B1B1E"/>
+        <rect x="65" y="141.5" width="8" height="9" rx="2" fill="url(#k2Wheel)"/><rect x="76" y="141.5" width="8" height="9" rx="2" fill="url(#k2Wheel)"/><rect x="87" y="141.5" width="8" height="9" rx="2" fill="url(#k2Wheel)"/><rect x="98" y="141.5" width="8" height="9" rx="2" fill="url(#k2Wheel)"/>
+      `;
+    } else if (pose === 'correcto') {
+      inner = `
+        <path d="M30 46 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z" fill="#F5DE50"/><path d="M142 60 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#4CC3E8"/>
+        <path d="M32 96 Q18 82 22 68" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="22" cy="67" r="6" fill="#2A2A30"/>
+        <path d="M138 96 Q152 82 148 68" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="148" cy="67" r="6" fill="#2A2A30"/>
+        ${body}
+        <path d="M60 108 Q71 99 82 108" fill="none" stroke="#232326" stroke-width="3.4" stroke-linecap="round"/><path d="M88 108 Q99 99 110 108" fill="none" stroke="#232326" stroke-width="3.4" stroke-linecap="round"/>
+        <ellipse cx="54" cy="128" rx="6" ry="4" fill="#F19B8E" opacity="0.6"/><ellipse cx="116" cy="128" rx="6" ry="4" fill="#F19B8E" opacity="0.6"/>
+        <path d="M60 138 Q85 166 110 138 Q85 150 60 138 Z" fill="#1B1B1E"/>
+        <rect x="66" y="139" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="76" y="140" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="86" y="140" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="96" y="139" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/>
+      `;
+    } else if (pose === 'incorrecto') {
+      inner = `
+        <path d="M40 128 Q30 138 32 150" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="32" cy="151" r="6" fill="#2A2A30"/>
+        <path d="M130 128 Q140 138 138 150" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="138" cy="151" r="6" fill="#2A2A30"/>
+        ${body}
+        <path d="M62 104 Q71 100 80 105" fill="none" stroke="#232326" stroke-width="2.8" stroke-linecap="round"/><path d="M90 105 Q99 100 108 104" fill="none" stroke="#232326" stroke-width="2.8" stroke-linecap="round"/>
+        <circle cx="71" cy="113" r="4.5" fill="#232326"/><circle cx="99" cy="113" r="4.5" fill="#232326"/>
+        <path d="M104 118 q5 8 0 15 q-5 -7 0 -15 z" fill="#4CC3E8"/>
+        <path d="M66 150 q6 -6 11 0 q5 6 11 0" fill="none" stroke="#232326" stroke-width="3" stroke-linecap="round"/>
+      `;
+    } else if (pose === 'racha') {
+      inner = `
+        <path d="M28 50 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 z" fill="#F5DE50"/><path d="M142 46 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z" fill="#E8784A"/><path d="M144 128 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#4CC3E8"/>
+        <path d="M34 112 Q20 104 24 90" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="24" cy="89" r="7" fill="#2A2A30"/>
+        <path d="M136 112 Q150 104 146 90" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="146" cy="89" r="7" fill="#2A2A30"/>
+        ${body}
+        <path d="M60 106 l12 5 -12 5" fill="none" stroke="#232326" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M110 106 l-12 5 12 5" fill="none" stroke="#232326" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <ellipse cx="54" cy="128" rx="6" ry="4" fill="#F19B8E" opacity="0.6"/><ellipse cx="116" cy="128" rx="6" ry="4" fill="#F19B8E" opacity="0.6"/>
+        <path d="M64 140 Q85 162 106 140 Q85 150 64 140 Z" fill="#1B1B1E"/>
+        <rect x="69" y="141" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="79" y="142" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="89" y="141" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/>
+      `;
+    } else if (pose === 'nivel') {
+      inner = `
+        <path d="M30 40 l3.5 3.5" fill="none"/>
+        <path d="M36 110 Q22 92 30 74" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="31" cy="73" r="6" fill="#2A2A30"/>
+        <g transform="rotate(-18 31 60)"><circle cx="31" cy="52" r="8" fill="none" stroke="url(#k2Gold)" stroke-width="4.5"/><rect x="28.8" y="58" width="4.4" height="18" rx="2" fill="url(#k2Gold)"/><rect x="33" y="69" width="5" height="3.4" fill="url(#k2Gold)"/><rect x="33" y="74" width="6" height="3.4" fill="url(#k2Gold)"/></g>
+        <path d="M134 110 Q150 94 144 78" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="144" cy="77" r="6" fill="#2A2A30"/>
+        ${body}
+        <path d="M60 108 Q71 99 82 108" fill="none" stroke="#232326" stroke-width="3.4" stroke-linecap="round"/><path d="M88 108 Q99 99 110 108" fill="none" stroke="#232326" stroke-width="3.4" stroke-linecap="round"/>
+        <ellipse cx="54" cy="128" rx="6" ry="4" fill="#F19B8E" opacity="0.6"/><ellipse cx="116" cy="128" rx="6" ry="4" fill="#F19B8E" opacity="0.6"/>
+        <path d="M62 138 Q85 166 108 138 Q85 150 62 138 Z" fill="#1B1B1E"/>
+        <rect x="68" y="139" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="78" y="140" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="88" y="140" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="98" y="139" width="7" height="7" rx="1.5" fill="url(#k2Wheel)"/>
+      `;
+    } else if (pose === 'gameover') {
+      inner = `
+        <path d="M40 126 Q32 138 34 150" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="34" cy="151" r="6" fill="#2A2A30"/>
+        <path d="M130 126 Q138 138 136 150" fill="none" stroke="url(#k2Arm)" stroke-width="9" stroke-linecap="round"/><circle cx="136" cy="151" r="6" fill="#2A2A30"/>
+        ${body}
+        <path d="M61 110 Q71 116 81 110" fill="none" stroke="#232326" stroke-width="3" stroke-linecap="round"/><path d="M89 110 Q99 116 109 110" fill="none" stroke="#232326" stroke-width="3" stroke-linecap="round"/>
+        <rect x="66" y="146" width="38" height="10" rx="5" fill="#1B1B1E"/>
+        <rect x="70" y="147.5" width="6" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="80" y="147.5" width="6" height="7" rx="1.5" fill="url(#k2Wheel)"/><rect x="90" y="147.5" width="6" height="7" rx="1.5" fill="url(#k2Wheel)"/>
+      `;
+      return `<svg class="ding-svg" width="${size}" height="${h}" viewBox="0 0 170 210" style="filter:grayscale(1) brightness(0.95)">${inner}</svg>`;
+    }
+    return `<svg class="ding-svg" width="${size}" height="${h}" viewBox="0 0 170 210">${inner}</svg>`;
   }
-  document.getElementById('mini-bell-header').outerHTML = dingSVG('bienvenida', 26);
+  document.getElementById('mini-bell-header').outerHTML = keeperSVG('bienvenida', 26);
 
   function starSVG(filled, size) {
     size = size || 16;
@@ -293,7 +356,7 @@
 
   function renderLogin() {
     main.innerHTML = `
-      ${dingSVG('bienvenida', 84)}
+      ${keeperSVG('bienvenida', 84)}
       <div class="serif" style="font-size:24px;">Tocá el timbre</div>
       <p class="hint">Iniciá sesión para guardar tu rating de anfitrión.</p>
       <div class="auth-box">
@@ -380,7 +443,7 @@
     }).join(', ');
 
     main.innerHTML = `
-      ${dingSVG('bienvenida', 80)}
+      ${keeperSVG('bienvenida', 80)}
       <div class="serif" style="font-size:22px;">¿Listo para girar?</div>
       <p class="hint">Caé en una categoría y demostrá lo que sabés.</p>
       <div id="wheel-wrap">
@@ -402,7 +465,7 @@
       timeLeftStr = `${mins}:${secs.toString().padStart(2,'0')}`;
     }
     main.innerHTML = `
-      ${dingSVG('gameover', 90)}
+      ${keeperSVG('gameover', 90)}
       <div class="serif" style="font-size:22px;">Sin corazones</div>
       <p class="hint">Tu próximo corazón está en camino.</p>
       <div class="mono" style="font-size:32px; margin-top:6px;" id="countdown">${timeLeftStr}</div>
@@ -457,7 +520,7 @@
     main.innerHTML = `
       <div style="width:100%;">
         <span class="category-tag" style="background:${currentCategory.hex}"><span class="dot"></span>${currentCategory.name}</span>
-        <div style="margin: 12px 0;">${dingSVG('bienvenida', 48)}</div>
+        <div style="margin: 12px 0;">${keeperSVG('bienvenida', 48)}</div>
         <div id="question-text">${currentQuestion.question}</div>
         <div id="options-list" style="margin-top:16px;">
           ${currentQuestion.options.map((opt, i) => `
@@ -517,7 +580,7 @@
 
     main.innerHTML = `
       <span class="result-tag" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${isCorrect ? '¡CORRECTO!' : 'CASI...'}</span>
-      ${dingSVG(isCorrect ? 'correcto' : 'incorrecto', isCorrect ? 100 : 96)}
+      ${keeperSVG(isCorrect ? (streak > 1 ? 'racha' : 'correcto') : 'incorrecto', isCorrect ? 100 : 96)}
       <div class="stars-row">${Array.from({length:5}, (_,i) => starSVG(i < stars, 18)).join('')}</div>
       ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 RACHA x${streak}</span>` : ''}
       <div class="explanation" style="border-color:${isCorrect ? 'var(--c-aircover)' : 'var(--c-reservas)'}">
@@ -535,7 +598,7 @@
 
   function renderGameOverScreen() {
     main.innerHTML = `
-      ${dingSVG('gameover', 90)}
+      ${keeperSVG('gameover', 90)}
       <div class="serif" style="font-size:22px;">Sin corazones</div>
       <div class="mono" style="font-size:15px;">${sessionCorrect} / ${sessionTotal} correctas esta partida</div>
       <div class="explanation" style="text-align:center;">
