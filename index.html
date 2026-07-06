@@ -136,7 +136,7 @@
 <body>
 
 <header>
-  <div class="wm" style="font-size:23px;">T<span class="dl" style="width:.6em;height:.6em;--dc:#E8784A"></span>pH<span class="dl" style="width:.6em;height:.6em;--dc:#4CC3E8"></span>st</div>
+  <div class="wm" id="logo-home-btn" style="font-size:23px; cursor:pointer;">T<span class="dl" style="width:.6em;height:.6em;--dc:#E8784A"></span>pH<span class="dl" style="width:.6em;height:.6em;--dc:#4CC3E8"></span>st</div>
   <button class="icon-btn" id="logout-btn" style="display:none;" title="Salir">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 17l5-5-5-5M21 12H9"/></svg>
   </button>
@@ -305,10 +305,17 @@
   const logoutBtn = document.getElementById('logout-btn');
   const roundStarsDisplay = document.getElementById('round-stars-display');
   const ratingDisplay = document.getElementById('rating-display');
+  const logoHomeBtn = document.getElementById('logo-home-btn');
 
   logoutBtn.addEventListener('click', async () => {
     await supabaseClient.auth.signOut();
     window.location.reload();
+  });
+
+  logoHomeBtn.addEventListener('click', () => {
+    hud.style.display = 'none';
+    logoutBtn.style.display = 'none';
+    renderPresentation();
   });
 
   function updateHud() {
