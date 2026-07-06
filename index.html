@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-<title>TopHost — El primer juego del mundo para anfitriones</title>
+<title>TopHost — El primer juego del mundo para hosts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Hanken+Grotesk:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -340,9 +340,9 @@
     `).join('');
 
     main.innerHTML = `
-      <div style="font:800 11px 'Baloo 2'; letter-spacing:.5px; color:#B79B6E; text-transform:uppercase;">El primer juego del mundo para anfitriones</div>
+      <div style="font:800 11px 'Baloo 2'; letter-spacing:.5px; color:#B79B6E; text-transform:uppercase;">El primer juego del mundo para hosts</div>
       ${keeperSVG('bienvenida', 76)}
-      <div class="home-title" style="font-size:23px;">Aprendé y divertite<br>mientras crecés como anfitrión</div>
+      <div class="home-title" style="font-size:23px;">Aprendé y divertite<br>mientras crecés como host</div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-top:4px;">${chips}</div>
       <button class="primary-btn warm" id="start-btn" style="margin-top:16px;">Empezar a jugar</button>
     `;
@@ -389,7 +389,7 @@
     main.innerHTML = `
       ${keeperSVG('bienvenida', 84)}
       <div class="home-title" style="font-size:24px;">Iniciá sesión</div>
-      <p class="hint">Guardá tu rating de anfitrión y seguí sumando partidas.</p>
+      <p class="hint">Guardá tu rating de host y seguí sumando partidas.</p>
       <div class="auth-box">
         <input class="auth-input" id="email-input" type="email" placeholder="Email" />
         <input class="auth-input" id="password-input" type="password" placeholder="Contraseña" />
@@ -482,7 +482,7 @@
 
     main.innerHTML = `
       ${keeperSVG('bienvenida', 80)}
-      <div class="home-title">¡A girar, anfitrión!</div>
+      <div class="home-title">¡Convertite en un verdadero Top Host!</div>
       <p class="hint">Caé en una categoría y sumá estrellas.</p>
       <div id="wheel-wrap">
         <div id="pointer"></div>
@@ -602,7 +602,7 @@
               <svg width="18" height="36" viewBox="0 0 40 80"><use href="#laurelL"/></svg>
               <svg width="18" height="36" viewBox="0 0 40 80" style="transform:scaleX(-1)"><use href="#laurelL"/></svg>
             </div>
-            <div class="seg-label">Favorito entre<br>anfitriones</div>
+            <div class="seg-label">Favorito entre<br>hosts</div>
           </div>
           <div class="divider"></div>
           <div class="seg">
