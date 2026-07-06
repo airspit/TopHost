@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-<title>TopHost — Tocá el timbre. Demostrá que sabés.</title>
+<title>TopHost — El primer juego del mundo para anfitriones</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Hanken+Grotesk:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -319,6 +319,30 @@
 
   // ====== AUTH ======
   async function init() {
+    renderPresentation();
+  }
+
+  function renderPresentation() {
+    const chips = CATEGORIES.map(c => `
+      <div style="display:flex; align-items:center; gap:8px; background:var(--card); border-radius:14px; padding:9px 10px; box-shadow:0 2px 6px -2px rgba(43,37,33,.15);">
+        <span style="width:26px; height:26px; border-radius:8px; background:${c.hex}; flex:none; display:flex; align-items:center; justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${c.dark}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
+        </span>
+        <span style="font:600 11.5px 'Hanken Grotesk'; text-align:left; line-height:1.15;">${c.name}</span>
+      </div>
+    `).join('');
+
+    main.innerHTML = `
+      <div style="font:800 11px 'Baloo 2'; letter-spacing:.5px; color:#B79B6E; text-transform:uppercase;">El primer juego del mundo para anfitriones</div>
+      ${keeperSVG('bienvenida', 76)}
+      <div class="home-title" style="font-size:23px;">Aprendé y divertite<br>mientras crecés como anfitrión</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-top:4px;">${chips}</div>
+      <button class="primary-btn warm" id="start-btn" style="margin-top:16px;">Empezar a jugar</button>
+    `;
+    document.getElementById('start-btn').addEventListener('click', handleStartFromPresentation);
+  }
+
+  async function handleStartFromPresentation() {
     const { data: { session: s } } = await supabaseClient.auth.getSession();
     session = s;
     if (session) {
@@ -357,8 +381,8 @@
   function renderLogin() {
     main.innerHTML = `
       ${keeperSVG('bienvenida', 84)}
-      <div class="serif" style="font-size:24px;">Tocá el timbre</div>
-      <p class="hint">Iniciá sesión para guardar tu rating de anfitrión.</p>
+      <div class="home-title" style="font-size:24px;">Iniciá sesión</div>
+      <p class="hint">Guardá tu rating de anfitrión y seguí sumando partidas.</p>
       <div class="auth-box">
         <input class="auth-input" id="email-input" type="email" placeholder="Email" />
         <input class="auth-input" id="password-input" type="password" placeholder="Contraseña" />
