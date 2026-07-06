@@ -241,6 +241,52 @@
 
   // ====== Keeper: candado-mascota, "un personaje, muchas caras" ======
   // ====== Keeper: mascota real en foto/render 3D, "un personaje, muchas caras" ======
+  // ====== Sonido: generado en vivo con Web Audio API, sin archivos externos ======
+  let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playTone(freq, duration, type, volume, delay) {
+    try {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.value = freq;
+      const startAt = ctx.currentTime + (delay || 0);
+      gain.gain.setValueAtTime(volume || 0.15, startAt);
+      gain.gain.exponentialRampToValueAtTime(0.001, startAt + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startAt);
+      osc.stop(startAt + duration);
+    } catch (e) { /* audio no disponible, seguimos sin sonido */ }
+  }
+
+  function playSpinSound(totalSeconds) {
+    let elapsed = 0;
+    const minGap = 0.05, maxGap = 0.26;
+    while (elapsed < totalSeconds) {
+      const progress = elapsed / totalSeconds;
+      playTone(1000, 0.025, 'square', 0.06, elapsed);
+      elapsed += minGap + (maxGap - minGap) * progress;
+    }
+  }
+
+  function playCorrectSound() {
+    playTone(523.25, 0.11, 'sine', 0.16, 0);
+    playTone(659.25, 0.11, 'sine', 0.16, 0.09);
+    playTone(783.99, 0.2, 'sine', 0.18, 0.18);
+  }
+
+  function playIncorrectSound() {
+    playTone(300, 0.16, 'sawtooth', 0.12, 0);
+    playTone(210, 0.24, 'sawtooth', 0.12, 0.11);
+  }
+
   function keeperImg(pose, size, animClass) {
     const wrapClass = 'keeper-wrap' + (animClass ? ' ' + animClass : '');
     return `<div class="${wrapClass}"><img src="keeper-${pose}.png" alt="Keeper" style="width:${size}px; height:auto; display:block; margin:0 auto;" /></div>`;
@@ -566,6 +612,7 @@
     const keeperEl = main.querySelector('.keeper-wrap');
     btn.disabled = true;
     if (keeperEl) keeperEl.classList.add('kp-lean');
+    playSpinSound(3.3);
 
     const randomIndex = Math.floor(Math.random() * CATEGORIES.length);
     const sliceAngle = 360 / CATEGORIES.length;
@@ -620,6 +667,7 @@
       else if (i === index && !isCorrect) btn.classList.add('incorrect');
     });
 
+    if (isCorrect) { playCorrectSound(); } else { playIncorrectSound(); }
     if (isCorrect) { roundCorrect += 1; streak += 1; } else { streak = 0; }
     roundIndex += 1;
     updateHud();
