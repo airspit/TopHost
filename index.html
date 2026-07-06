@@ -65,8 +65,8 @@
   #hud .rating-pill { font-family: 'Baloo 2'; font-weight: 700; font-size: 14px; }
 
   main {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 10px 24px 26px; gap: 12px; text-align: center;
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 18px 24px 26px; gap: 12px; text-align: center;
   }
 
   .ding-svg { display: block; margin: 0 auto; }
@@ -93,7 +93,7 @@
   .girar:active { transform: translate(-50%,-50%) scale(.95); animation: none; }
   .girar:disabled { opacity: .75; }
 
-  .category-tag { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 999px; font-family: 'Baloo 2'; font-weight: 700; font-size: 12px; color: var(--ink); text-transform: uppercase; letter-spacing: .2px; }
+  .category-tag { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 999px; font-family: 'Baloo 2'; font-weight: 700; font-size: 14px; color: var(--ink); text-transform: uppercase; letter-spacing: .3px; box-shadow: 0 3px 8px -3px rgba(43,37,33,.25); }
 
   #question-text { font-family: 'Baloo 2'; font-weight: 600; font-size: 19px; line-height: 1.25; text-align: left; width: 100%; animation: fadeUp .35s ease; }
   #options-list { width: 100%; display: flex; flex-direction: column; gap: 9px; text-align: left; }
@@ -534,11 +534,11 @@
     main.innerHTML = `
       <div style="width:100%;">
         <span class="category-tag" style="background:${currentCategory.hex}">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${currentCategory.dark}" stroke-width="2.2" stroke-linejoin="round">${currentCategory.icon}</svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">${currentCategory.icon}</svg>
           ${currentCategory.name}
         </span>
-        <div style="margin: 12px 0; display:flex; gap:11px; align-items:flex-start; text-align:left;">
-          ${keeperSVG('bienvenida', 52, 'kp-think')}
+        <div style="margin: 16px 0; display:flex; gap:12px; align-items:center; text-align:left;">
+          ${keeperSVG('bienvenida', 56, 'kp-think')}
           <div id="question-text" style="margin:0;">${currentQuestion.question}</div>
         </div>
         <div id="options-list" style="margin-top:16px;">
