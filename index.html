@@ -93,7 +93,7 @@
   .girar:active { transform: translate(-50%,-50%) scale(.95); animation: none; }
   .girar:disabled { opacity: .75; }
 
-  .category-tag { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 999px; font-family: 'Baloo 2'; font-weight: 700; font-size: 12px; color: #12420F; }
+  .category-tag { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 999px; font-family: 'Baloo 2'; font-weight: 700; font-size: 12px; color: var(--ink); text-transform: uppercase; letter-spacing: .2px; }
 
   #question-text { font-family: 'Baloo 2'; font-weight: 600; font-size: 19px; line-height: 1.25; text-align: left; width: 100%; animation: fadeUp .35s ease; }
   #options-list { width: 100%; display: flex; flex-direction: column; gap: 9px; text-align: left; }
@@ -190,7 +190,7 @@
   const ROUND_LENGTH = 5; // preguntas por partida = estrellas máximas posibles en la ronda
 
   const CATEGORIES = [
-    { id: 'espacio', name: 'Espacio', full: 'Publica tu Espacio', tagline: 'Construís tu alojamiento.', hex: '#E8784A', dark: '#E8784A', icon: '<path d="M3 11l9-8 9 8"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>' },
+    { id: 'espacio', name: 'Espacio', full: 'Publica tu Espacio', tagline: 'Construís tu alojamiento.', hex: '#E8784A', dark: '#B4542E', icon: '<path d="M3 11l9-8 9 8"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>' },
     { id: 'hospitalidad', name: 'Hospitalidad', full: 'Hospitalidad y Experiencia', tagline: 'Aprendés a recibir personas.', hex: '#6BCB6B', dark: '#3FA23F', icon: '<path d="M12 21s-6.5-4.2-9-8.6C1.2 8.8 2.6 5 6.2 5c2 0 3.4 1.2 3.8 2.7C10.4 6.2 11.8 5 13.8 5c3.6 0 5 3.8 3.2 7.4-2.5 4.4-9 8.6-9 8.6z"/>' },
     { id: 'operaciones', name: 'Operaciones', full: 'Operaciones', tagline: 'Hacés que todo funcione.', hex: '#F5DE50', dark: '#C79A00', icon: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.2.61.76 1.05 1.42 1.09H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>' },
     { id: 'seguridad', name: 'Seguridad', full: 'Seguridad y Confianza', tagline: 'Protegés tu negocio.', hex: '#4CC3E8', dark: '#2597BE', icon: '<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>' },
@@ -331,11 +331,11 @@
 
   function renderPresentation() {
     const chips = CATEGORIES.map(c => `
-      <div style="display:flex; align-items:center; gap:8px; background:var(--card); border-radius:14px; padding:9px 10px; box-shadow:0 2px 6px -2px rgba(43,37,33,.15);">
-        <span style="width:26px; height:26px; border-radius:8px; background:${c.hex}; flex:none; display:flex; align-items:center; justify-content:center;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${c.dark}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
+      <div style="display:flex; align-items:center; gap:9px; background:var(--card); border-radius:14px; padding:9px 10px; box-shadow:0 2px 6px -2px rgba(43,37,33,.15);">
+        <span style="width:32px; height:32px; border-radius:9px; background:${c.hex}; flex:none; display:flex; align-items:center; justify-content:center;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
         </span>
-        <span style="font:600 11.5px 'Hanken Grotesk'; text-align:left; line-height:1.15;">${c.name}</span>
+        <span style="font:700 11.5px 'Hanken Grotesk'; text-align:left; line-height:1.15; text-transform:uppercase; letter-spacing:.2px;">${c.name}</span>
       </div>
     `).join('');
 
