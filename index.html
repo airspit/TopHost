@@ -153,9 +153,14 @@
 
 <header>
   <div class="wm" id="logo-home-btn" style="font-size:23px; cursor:pointer;">T<span class="dl" style="width:.6em;height:.6em;--dc:#E8784A"></span>pH<span class="dl" style="width:.6em;height:.6em;--dc:#4CC3E8"></span>st</div>
-  <button class="icon-btn" id="logout-btn" style="display:none;" title="Salir">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 17l5-5-5-5M21 12H9"/></svg>
-  </button>
+  <div style="display:flex; gap:8px;">
+    <button class="icon-btn" id="ranking-btn" style="display:none;" title="Ranking">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 2 4M17 6h3a2 2 0 0 1-2 4"/></svg>
+    </button>
+    <button class="icon-btn" id="logout-btn" style="display:none;" title="Salir">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 17l5-5-5-5M21 12H9"/></svg>
+    </button>
+  </div>
 </header>
 
 <div id="hud" style="display:none;">
@@ -330,6 +335,7 @@
   const main = document.getElementById('main');
   const hud = document.getElementById('hud');
   const logoutBtn = document.getElementById('logout-btn');
+  const rankingBtn = document.getElementById('ranking-btn');
   const roundStarsDisplay = document.getElementById('round-stars-display');
   const ratingDisplay = document.getElementById('rating-display');
   const logoHomeBtn = document.getElementById('logo-home-btn');
@@ -342,6 +348,7 @@
   logoHomeBtn.addEventListener('click', () => {
     hud.style.display = 'none';
     logoutBtn.style.display = 'none';
+    rankingBtn.style.display = 'none';
     renderPresentation();
   });
 
@@ -393,9 +400,7 @@
     session = s;
     if (session) {
       await loadOrCreatePlayer();
-      hud.style.display = 'flex';
-      logoutBtn.style.display = 'inline';
-      renderHome();
+      proceedAfterAuth();
     } else {
       renderLogin();
     }
@@ -404,13 +409,20 @@
   supabaseClient.auth.onAuthStateChange((event, s) => {
     if (event === 'SIGNED_IN' && !session) {
       session = s;
-      loadOrCreatePlayer().then(() => {
-        hud.style.display = 'flex';
-        logoutBtn.style.display = 'inline';
-        renderHome();
-      });
+      loadOrCreatePlayer().then(proceedAfterAuth);
     }
   });
+
+  function proceedAfterAuth() {
+    hud.style.display = 'flex';
+    logoutBtn.style.display = 'inline';
+    rankingBtn.style.display = 'inline';
+    if (!player.nickname) {
+      renderNicknamePrompt();
+    } else {
+      renderHome();
+    }
+  }
 
   async function loadOrCreatePlayer() {
     const uid = session.user.id;
@@ -422,6 +434,82 @@
       data = created;
     }
     player = data;
+  }
+
+  function renderNicknamePrompt() {
+    main.innerHTML = `
+      ${keeperSVG('bienvenida', 76)}
+      <div class="home-title" style="font-size:22px;">Elegí tu @nickname</div>
+      <p class="hint">Así te van a ver los demás hosts en el ranking. Sin espacios, entre 3 y 20 caracteres.</p>
+      <div class="auth-box">
+        <div style="position:relative;">
+          <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); font:700 14px 'Hanken Grotesk'; color:rgba(43,37,33,.4);">@</span>
+          <input class="auth-input" id="nickname-input" type="text" placeholder="tunombre" style="padding-left:28px;" maxlength="20" />
+        </div>
+        <div class="auth-error" id="nickname-error"></div>
+        <button class="btn3d" style="background:var(--ink);--sh:#000;" id="nickname-submit-btn">Continuar</button>
+      </div>
+    `;
+    const input = document.getElementById('nickname-input');
+    const errorDiv = document.getElementById('nickname-error');
+    const submitBtn = document.getElementById('nickname-submit-btn');
+
+    submitBtn.addEventListener('click', async () => {
+      errorDiv.textContent = '';
+      const raw = input.value.trim().replace(/^@/, '');
+      if (!/^[a-zA-Z0-9_]{3,20}$/.test(raw)) {
+        errorDiv.textContent = 'Usá entre 3 y 20 letras, números o guiones bajos, sin espacios.';
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = '...';
+      const { data: existing } = await supabaseClient.from('players').select('id').eq('nickname', raw).maybeSingle();
+      if (existing && existing.id !== player.id) {
+        errorDiv.textContent = 'Ese nickname ya está en uso. Probá con otro.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continuar';
+        return;
+      }
+      const { error: updateError } = await supabaseClient.from('players').update({ nickname: raw }).eq('id', player.id);
+      if (updateError) {
+        errorDiv.textContent = 'Ese nickname ya está en uso. Probá con otro.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continuar';
+        return;
+      }
+      player.nickname = raw;
+      renderHome();
+    });
+  }
+
+  rankingBtn.addEventListener('click', renderRanking);
+
+  async function renderRanking() {
+    main.innerHTML = `<p class="hint">Cargando ranking...</p>`;
+    const { data, error } = await supabaseClient.rpc('get_leaderboard', { limit_count: 20 });
+    const rows = (data || []);
+
+    const rowsHtml = rows.map((r, i) => {
+      const isMe = player.nickname && r.nickname === player.nickname;
+      return `
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:${isMe ? 'var(--sand)' : 'var(--card)'}; box-shadow:0 2px 6px -3px rgba(43,37,33,.15);">
+          <span style="font-family:'Baloo 2'; font-weight:800; font-size:14px; width:22px; color:rgba(43,37,33,.5);">${i + 1}</span>
+          <span style="flex:1; text-align:left; font:700 13.5px 'Hanken Grotesk';">@${r.nickname}${isMe ? ' (vos)' : ''}</span>
+          <span style="font-family:'Baloo 2'; font-weight:800; font-size:14px; display:flex; align-items:center; gap:4px;">${starSVG(true, 13, '#F5C020')}${Number(r.rating).toFixed(2)}</span>
+          <span style="font:600 11px 'Hanken Grotesk'; color:rgba(43,37,33,.45); width:52px; text-align:right;">${r.total_reviews} part.</span>
+        </div>
+      `;
+    }).join('');
+
+    main.innerHTML = `
+      <div class="home-title" style="font-size:21px;">Ranking de hosts</div>
+      <p class="hint">Ordenado por rating, partidas jugadas y actividad reciente.</p>
+      <div style="display:flex; flex-direction:column; gap:8px; width:100%; margin-top:6px; max-height:56vh; overflow-y:auto;">
+        ${rowsHtml || '<p class="hint">Todavía no hay hosts en el ranking.</p>'}
+      </div>
+      <button class="primary-btn dark" id="ranking-back-btn">Volver</button>
+    `;
+    document.getElementById('ranking-back-btn').addEventListener('click', renderHome);
   }
 
   function renderLogin() {
@@ -681,7 +769,9 @@
 
     player.rating = newRating;
     player.total_reviews = newRounds;
-    await supabaseClient.from('players').update({ rating: newRating, total_reviews: newRounds }).eq('id', player.id);
+    const nowIso = new Date().toISOString();
+    player.last_played_at = nowIso;
+    await supabaseClient.from('players').update({ rating: newRating, total_reviews: newRounds, last_played_at: nowIso }).eq('id', player.id);
 
     const deltaClass = ratingDelta >= 0 ? 'up' : 'down';
     const deltaSign = ratingDelta >= 0 ? '+' : '';
