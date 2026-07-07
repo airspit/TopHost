@@ -833,20 +833,24 @@
     }
     const letters = ['A', 'B', 'C', 'D'];
     main.innerHTML = `
-      <div style="width:100%;">
-        <span class="category-tag" style="background:${currentCategory.hex}">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">${currentCategory.icon}</svg>
-          ${lang === 'en' ? currentCategory.name_en : currentCategory.name}
-        </span>
-        <div style="margin: 16px 0; display:flex; gap:12px; align-items:center; text-align:left;">
-          ${keeperImg('bienvenida', 56, 'kp-think')}
-          <div id="question-text" style="margin:0;">${currentQuestion.question}</div>
+      <div style="display:flex; flex-direction:column; align-items:center; flex:1; width:100%;">
+        <div style="flex:.6;"></div>
+        <div style="width:100%;">
+          <span class="category-tag" style="background:${currentCategory.hex}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">${currentCategory.icon}</svg>
+            ${lang === 'en' ? currentCategory.name_en : currentCategory.name}
+          </span>
+          <div style="margin: 16px 0; display:flex; gap:12px; align-items:center; text-align:left;">
+            ${keeperImg('bienvenida', 56, 'kp-think')}
+            <div id="question-text" style="margin:0;">${currentQuestion.question}</div>
+          </div>
+          <div id="options-list" style="margin-top:16px;">
+            ${currentQuestion.options.map((opt, i) => `
+              <button class="option" data-index="${i}"><span class="letter">${letters[i]}</span><span>${opt}</span></button>
+            `).join('')}
+          </div>
         </div>
-        <div id="options-list" style="margin-top:16px;">
-          ${currentQuestion.options.map((opt, i) => `
-            <button class="option" data-index="${i}"><span class="letter">${letters[i]}</span><span>${opt}</span></button>
-          `).join('')}
-        </div>
+        <div style="flex:.9;"></div>
       </div>
     `;
     document.querySelectorAll('.option').forEach(btn => {
@@ -878,14 +882,18 @@
     const streakLabel = lang === 'en' ? 'STREAK' : 'RACHA';
 
     main.innerHTML = `
-      <span class="result-tag" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${isCorrect ? t('correct') : t('almost')}</span>
-      ${keeperImg(isCorrect ? (streak > 1 ? 'racha' : 'correcto') : 'incorrecto', isCorrect ? 100 : 96)}
-      ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 ${streakLabel} x${streak}</span>` : ''}
-      <div class="explanation" style="border-color:${isCorrect ? 'var(--c-aircover)' : 'var(--c-reservas)'}">
-        <div class="label" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${t('why')}</div>
-        <p>${currentQuestion.explanation}</p>
+      <div style="display:flex; flex-direction:column; align-items:center; flex:1; width:100%;">
+        <div style="flex:.6;"></div>
+        <span class="result-tag" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${isCorrect ? t('correct') : t('almost')}</span>
+        ${keeperImg(isCorrect ? (streak > 1 ? 'racha' : 'correcto') : 'incorrecto', isCorrect ? 100 : 96)}
+        ${isCorrect && streak > 1 ? `<span class="streak-badge">🔥 ${streakLabel} x${streak}</span>` : ''}
+        <div class="explanation" style="border-color:${isCorrect ? 'var(--c-aircover)' : 'var(--c-reservas)'}">
+          <div class="label" style="color:${isCorrect ? '#3F9A40' : '#E8784A'}">${t('why')}</div>
+          <p>${currentQuestion.explanation}</p>
+        </div>
+        <button class="primary-btn ${isCorrect ? 'correct' : 'dark'}" id="continue-btn">${isLastQuestion ? t('seeResult') : t('nextQuestion')}</button>
+        <div style="flex:.9;"></div>
       </div>
-      <button class="primary-btn ${isCorrect ? 'correct' : 'dark'}" id="continue-btn">${isLastQuestion ? t('seeResult') : t('nextQuestion')}</button>
     `;
     document.getElementById('continue-btn').addEventListener('click', () => {
       if (isLastQuestion) {
