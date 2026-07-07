@@ -21,6 +21,8 @@
     --c-comunicacion: #4CC3E8;
     --c-precios: #9B63C2;
     --c-actualizaciones: #E6A0E3;
+    --c-cta: #FF385C;
+    --c-cta-sh: #C21F42;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -82,8 +84,9 @@
 
   main {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-    padding: 18px 24px 26px; gap: 12px; text-align: center;
+    padding: 20px 24px 24px; gap: 14px; text-align: center;
   }
+  .home-stack { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
 
   .ding-svg { display: block; margin: 0 auto; }
   .hint { font-size: 13px; color: rgba(43,37,33,.55); max-width: 280px; line-height: 1.4; }
@@ -133,6 +136,7 @@
   .primary-btn.dark { background: var(--ink); color: #fff; --sh: #000; }
   .primary-btn.correct { background: var(--c-aircover); color: #12420F; --sh: #4A9A4A; }
   .primary-btn.warm { background: var(--c-reservas); color: #fff; --sh: #B4542E; }
+  .primary-btn.cta { background: var(--c-cta); color: #fff; --sh: var(--c-cta-sh); }
 
   .stars-row { display: flex; gap: 4px; justify-content: center; margin: 6px 0; }
   .rating-delta { font-family: 'Baloo 2'; font-weight: 700; font-size: 13px; }
@@ -262,6 +266,7 @@
   const I18N = {
     es: {
       eyebrow: 'El primer juego del mundo para hosts',
+      keeperGreeting: '¡Hola, soy Keeper!',
       heroTitle: 'Aprendé y divertite<br>mientras crecés como host',
       startBtn: 'Empezar a jugar',
       loginTitle: 'Iniciá sesión',
@@ -314,6 +319,7 @@
     },
     en: {
       eyebrow: "The world's first game for hosts",
+      keeperGreeting: "Hi, I'm Keeper!",
       heroTitle: 'Learn and have fun<br>while you grow as a host',
       startBtn: 'Start playing',
       loginTitle: 'Log in',
@@ -488,7 +494,7 @@
 
   function renderPresentation() {
     const chips = CATEGORIES.map(c => `
-      <div style="display:flex; align-items:center; gap:9px; background:var(--card); border-radius:14px; padding:9px 10px; box-shadow:0 2px 6px -2px rgba(43,37,33,.15);">
+      <div style="display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:11px 12px; box-shadow:0 2px 6px -2px rgba(43,37,33,.15);">
         <span style="width:32px; height:32px; border-radius:9px; background:${c.hex}; flex:none; display:flex; align-items:center; justify-content:center;">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
         </span>
@@ -497,19 +503,28 @@
     `).join('');
 
     main.innerHTML = `
-      <div style="display:flex; gap:8px; margin-bottom:2px;">
-        <button id="flag-es" style="border:none; background:${lang === 'es' ? 'var(--card)' : 'transparent'}; border-radius:10px; padding:5px 9px; font-size:20px; cursor:pointer; box-shadow:${lang === 'es' ? '0 2px 6px -2px rgba(43,37,33,.25)' : 'none'};">🇦🇷</button>
-        <button id="flag-en" style="border:none; background:${lang === 'en' ? 'var(--card)' : 'transparent'}; border-radius:10px; padding:5px 9px; font-size:20px; cursor:pointer; box-shadow:${lang === 'en' ? '0 2px 6px -2px rgba(43,37,33,.25)' : 'none'};">🇺🇸</button>
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:space-between; flex:1; width:100%;">
+        <div class="home-stack">
+          <div style="display:flex; gap:8px;">
+            <button id="flag-es" style="border:none; background:${lang === 'es' ? 'var(--card)' : 'transparent'}; border-radius:10px; padding:5px 9px; font-size:20px; cursor:pointer; box-shadow:${lang === 'es' ? '0 2px 6px -2px rgba(43,37,33,.25)' : 'none'};">🇦🇷</button>
+            <button id="flag-en" style="border:none; background:${lang === 'en' ? 'var(--card)' : 'transparent'}; border-radius:10px; padding:5px 9px; font-size:20px; cursor:pointer; box-shadow:${lang === 'en' ? '0 2px 6px -2px rgba(43,37,33,.25)' : 'none'};">🇺🇸</button>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,56,92,.09); border:1px solid rgba(255,56,92,.28); color:var(--c-cta); padding:6px 14px; border-radius:999px; font:800 11.5px 'Baloo 2'; letter-spacing:.3px; text-transform:uppercase;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--c-cta)"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.8l-6.3 4.2 2.3-7.2-6-4.6h7.6z"/></svg>
+            ${t('eyebrow')}
+          </div>
+          <div style="margin-top:6px;">
+            ${keeperImg('bienvenida', 78)}
+          </div>
+          <div class="home-title" style="font-size:23px; margin-top:6px;">${t('heroTitle')}</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:11px; width:100%;">${chips}</div>
+          <button class="primary-btn cta" id="start-btn" style="margin-top:4px;">${t('startBtn')}</button>
+        </div>
+        <a href="https://www.instagram.com/tophost.fun" target="_blank" rel="noopener" style="margin-top:14px; display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.55); font:600 12.5px 'Hanken Grotesk';">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+          @tophost.fun
+        </a>
       </div>
-      <div style="font:800 11px 'Baloo 2'; letter-spacing:.5px; color:#B79B6E; text-transform:uppercase;">${t('eyebrow')}</div>
-      ${keeperImg('bienvenida', 76)}
-      <div class="home-title" style="font-size:23px;">${t('heroTitle')}</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-top:4px;">${chips}</div>
-      <button class="primary-btn warm" id="start-btn" style="margin-top:16px;">${t('startBtn')}</button>
-      <a href="https://www.instagram.com/tophost.fun" target="_blank" rel="noopener" style="margin-top:44px; display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.55); font:600 12.5px 'Hanken Grotesk';">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
-        @tophost.fun
-      </a>
     `;
     document.getElementById('start-btn').addEventListener('click', handleStartFromPresentation);
     document.getElementById('flag-es').addEventListener('click', () => setLang('es'));
@@ -937,7 +952,7 @@
       ${reviewBadge(isFavorito)}
       ${showDelta ? `<div class="rating-delta ${deltaClass}">${deltaSign}${ratingDelta.toFixed(2)} ${t('thisRound')}</div>` : ''}
       <p class="hint">${footerHint}</p>
-      <button class="primary-btn warm" id="again-btn">${t('playAgain')}</button>
+      <button class="primary-btn cta" id="again-btn">${t('playAgain')}</button>
     `;
     document.getElementById('again-btn').addEventListener('click', startNewRound);
   }
