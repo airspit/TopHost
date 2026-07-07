@@ -111,9 +111,17 @@
   .auth-toggle { font: 600 12px 'Hanken Grotesk'; color: var(--c-comunicacion); background: none; border: none; cursor: pointer; text-decoration: underline; }
   .auth-error { font: 600 12px 'Hanken Grotesk'; color: var(--c-reservas); }
 
-  #wheel-wrap { position: relative; width: 236px; height: 236px; margin: 8px auto 0; }
+  #wheel-wrap {
+    position: relative; width: 236px; height: 236px; margin: 8px auto 0;
+    border-radius: 50%; background: #FBF6EC; box-sizing: border-box; padding: 11px;
+    box-shadow:
+      inset 0 2px 2px rgba(255,255,255,.8),
+      inset 0 -5px 9px rgba(43,37,33,.14),
+      0 22px 42px -16px rgba(43,37,33,.55),
+      0 8px 18px -8px rgba(43,37,33,.35);
+  }
   #pointer { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); z-index: 8; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 22px solid var(--ink); filter: drop-shadow(0 3px 2px rgba(43,37,33,.25)); }
-  #wheel { width: 236px; height: 236px; border-radius: 50%; box-shadow: 0 14px 34px -10px rgba(43,37,33,.4), inset 0 0 0 7px #FBF6EC, inset 0 0 0 9px rgba(43,37,33,.12); transition: transform 3.2s cubic-bezier(.15,.9,.25,1); position: relative; }
+  #wheel { width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 3px 7px rgba(43,37,33,.2), 0 4px 10px -5px rgba(43,37,33,.3); transition: transform 3.2s cubic-bezier(.15,.9,.25,1); position: relative; }
   .wheel-icons { position: absolute; inset: 0; }
   .wheel-icon { position: absolute; top: 50%; left: 50%; margin: -13px; width: 26px; height: 26px; border-radius: 50%; background: #FBF6EC; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,.18); }
   .girar {
@@ -759,7 +767,7 @@
     const sliceAngle = 360 / CATEGORIES.length;
     const iconsHtml = CATEGORIES.map((c, i) => {
       const angle = sliceAngle * i + sliceAngle / 2;
-      return `<span class="wheel-icon" style="transform:rotate(${angle}deg) translateY(-84px) rotate(-${angle}deg);">
+      return `<span class="wheel-icon" style="transform:rotate(${angle}deg) translateY(-77px) rotate(-${angle}deg);">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${c.dark}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
       </span>`;
     }).join('');
