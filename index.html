@@ -306,6 +306,7 @@
       nicknameHint: 'Así te van a ver los demás hosts en el ranking. Sin espacios, entre 3 y 20 caracteres.',
       nicknamePh: 'tunombre',
       nicknameInvalid: 'Usá entre 3 y 20 letras, números o guiones bajos, sin espacios.',
+      nicknameReserved: 'Ese nickname no está disponible.',
       nicknameTaken: 'Ese nickname ya está en uso. Probá con otro.',
       continueBtn: 'Continuar',
       ratingTooltip: 'Tu rating es el <b>promedio de todas tus partidas</b>. Cada partida puede darte hasta 5 estrellas. Cuantas más respuestas correctas tengas, mayor será tu promedio.',
@@ -360,6 +361,7 @@
       nicknameHint: "This is how other hosts will see you on the ranking. No spaces, 3 to 20 characters.",
       nicknamePh: 'yourname',
       nicknameInvalid: 'Use 3 to 20 letters, numbers or underscores, no spaces.',
+      nicknameReserved: 'That nickname is not available.',
       nicknameTaken: 'That nickname is already taken. Try another one.',
       continueBtn: 'Continue',
       ratingTooltip: 'Your rating is the <b>average of all your rounds</b>. Each round can earn you up to 5 stars. The more correct answers you get, the higher your average.',
@@ -613,12 +615,17 @@
     const input = document.getElementById('nickname-input');
     const errorDiv = document.getElementById('nickname-error');
     const submitBtn = document.getElementById('nickname-submit-btn');
+    const RESERVED_NICKNAMES = ['tophost', 'tophostfun', 'superhost', 'airbnb'];
 
     submitBtn.addEventListener('click', async () => {
       errorDiv.textContent = '';
       const raw = input.value.trim().replace(/^@/, '');
       if (!/^[a-zA-Z0-9_]{3,20}$/.test(raw)) {
         errorDiv.textContent = t('nicknameInvalid');
+        return;
+      }
+      if (RESERVED_NICKNAMES.includes(raw.toLowerCase())) {
+        errorDiv.textContent = t('nicknameReserved');
         return;
       }
       submitBtn.disabled = true;
