@@ -543,7 +543,7 @@
     ratingDisplay.textContent = player.total_reviews > 0 ? Number(player.rating).toFixed(2) : '—';
     const filled = Array.from({length: ROUND_LENGTH}, (_, i) => {
       if (roundResults[i] === true) return starSVG(true, 19, '#F5C020');
-      if (roundResults[i] === false) return starSVG(true, 19, '#B7ADA0');
+      if (roundResults[i] === false) return starSVG(true, 19, '#6E665A');
       return starSVG(false, 19);
     }).join('');
     roundStarsDisplay.innerHTML = `${filled}<span class="frac">${Math.min(roundCorrect, ROUND_LENGTH)}<span>/${ROUND_LENGTH}</span></span>`;
