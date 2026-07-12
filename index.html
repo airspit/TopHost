@@ -191,11 +191,26 @@
     <span>TopHost</span>
   </div>
   <div style="display:flex; gap:8px;">
+    <button class="icon-btn" id="sources-btn" style="display:none;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="10.5" x2="12" y2="16"/><circle cx="12" cy="7.3" r="0.6" fill="currentColor" stroke="none"/></svg>
+    </button>
     <button class="icon-btn" id="ranking-btn" style="display:none;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 2 4M17 6h3a2 2 0 0 1-2 4"/></svg>
     </button>
   </div>
 </header>
+
+<div id="sources-modal" style="display:none; position:fixed; inset:0; z-index:50; align-items:center; justify-content:center; padding:24px; background:rgba(43,37,33,.5);">
+  <div style="background:var(--card); border-radius:20px; padding:24px; max-width:380px; max-height:80vh; overflow-y:auto; box-shadow:0 20px 50px -12px rgba(0,0,0,.4);">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <span style="font-family:'Baloo 2'; font-weight:800; font-size:19px;" id="sources-title"></span>
+      <button id="sources-close-btn" style="border:none; background:rgba(43,37,33,.08); width:30px; height:30px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div id="sources-body" style="font:500 13.5px/1.55 'Hanken Grotesk'; color:rgba(43,37,33,.85); text-align:left;"></div>
+  </div>
+</div>
 
 <div id="hud" style="display:none;">
   <div class="hud-row">
@@ -339,7 +354,10 @@
       noRanking: 'Todavía no hay hosts en el ranking.',
       loadingRanking: 'Cargando ranking...',
       exitTitle: 'Salir',
-      rankingBtnTitle: 'Ranking'
+      rankingBtnTitle: 'Ranking',
+      sourcesBtnTitle: 'Fuentes',
+      sourcesTitle: 'Fuentes',
+      sourcesBody: 'Todas las preguntas de TopHost están basadas en documentación oficial de la plataforma, incluyendo: Condiciones de Servicio, Política de Privacidad, Políticas de la comunidad, Política contra la discriminación, Estándares para anfitriones, Políticas de cancelación, Políticas de contenido, Verificación de identidad, Registro de usuarios y anfitriones, Protección para anfitriones, Seguridad, Pagos, Coanfitriones y Centro de Recursos para Anfitriones.<br><br>El contenido se actualiza todo el tiempo y se reescribe para el formato de juego, pero no es una IA improvisando: cada pregunta está anclada en documentación oficial real y verificable, no en lo que un chatbot cree recordar sobre la plataforma.'
     },
     en: {
       eyebrow: "The world's first game for hosts",
@@ -394,7 +412,10 @@
       noRanking: 'There are no hosts on the ranking yet.',
       loadingRanking: 'Loading ranking...',
       exitTitle: 'Exit',
-      rankingBtnTitle: 'Ranking'
+      rankingBtnTitle: 'Ranking',
+      sourcesBtnTitle: 'Sources',
+      sourcesTitle: 'Sources',
+      sourcesBody: "Every question in TopHost is based on the platform's official documentation, including: Terms of Service, Privacy Policy, Community Policies, Nondiscrimination Policy, Host Standards, Cancellation Policies, Content Policies, Identity Verification, Guest and Host Registration, Host Protection, Safety, Payments, Co-Hosting, and the Resource Center for Hosts.<br><br>The content gets updated constantly and gets rewritten for the game format, but this isn't an AI improvising: every question is anchored in real, verifiable official documentation — not in whatever a chatbot thinks it remembers about the platform."
     }
   };
 
@@ -479,6 +500,8 @@
   const main = document.getElementById('main');
   const hud = document.getElementById('hud');
   const rankingBtn = document.getElementById('ranking-btn');
+  const sourcesBtn = document.getElementById('sources-btn');
+  const sourcesModal = document.getElementById('sources-modal');
   const roundStarsDisplay = document.getElementById('round-stars-display');
   const ratingDisplay = document.getElementById('rating-display');
   const logoHomeBtn = document.getElementById('logo-home-btn');
@@ -491,7 +514,20 @@
   logoHomeBtn.addEventListener('click', () => {
     hud.style.display = 'none';
     rankingBtn.style.display = 'none';
+    sourcesBtn.style.display = 'none';
     renderPresentation();
+  });
+
+  sourcesBtn.addEventListener('click', () => {
+    document.getElementById('sources-title').textContent = t('sourcesTitle');
+    document.getElementById('sources-body').innerHTML = t('sourcesBody');
+    sourcesModal.style.display = 'flex';
+  });
+  document.getElementById('sources-close-btn').addEventListener('click', () => {
+    sourcesModal.style.display = 'none';
+  });
+  sourcesModal.addEventListener('click', (e) => {
+    if (e.target === sourcesModal) sourcesModal.style.display = 'none';
   });
 
   document.getElementById('rating-info-btn').addEventListener('click', (e) => {
@@ -509,6 +545,7 @@
     document.getElementById('round-label').textContent = t('roundLabel');
     document.getElementById('rating-tooltip').innerHTML = t('ratingTooltip');
     rankingBtn.title = t('rankingBtnTitle');
+    sourcesBtn.title = t('sourcesBtnTitle');
   }
 
   // ====== AUTH ======
@@ -579,6 +616,7 @@
   function proceedAfterAuth() {
     hud.style.display = 'flex';
     rankingBtn.style.display = 'inline';
+    sourcesBtn.style.display = 'inline';
     if (!player.nickname) {
       renderNicknamePrompt();
     } else {
