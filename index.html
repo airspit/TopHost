@@ -493,6 +493,7 @@
   let player = null;       // fila de la tabla players
   let roundIndex = 0;      // pregunta actual dentro de la ronda (0 a ROUND_LENGTH-1)
   let roundCorrect = 0;    // aciertos en la ronda actual = estrellas de esta partida
+  let roundResults = [];   // resultado de cada pregunta de la ronda: true, false, o undefined (sin responder)
   let streak = 0;
   let currentCategory = null, currentQuestion = null;
   let questionsCache = {};
@@ -540,7 +541,11 @@
 
   function updateHud() {
     ratingDisplay.textContent = player.total_reviews > 0 ? Number(player.rating).toFixed(2) : '—';
-    const filled = Array.from({length: ROUND_LENGTH}, (_, i) => starSVG(i < roundCorrect, 19, '#F5C020')).join('');
+    const filled = Array.from({length: ROUND_LENGTH}, (_, i) => {
+      if (roundResults[i] === true) return starSVG(true, 19, '#F5C020');
+      if (roundResults[i] === false) return starSVG(true, 19, '#B7ADA0');
+      return starSVG(false, 19);
+    }).join('');
     roundStarsDisplay.innerHTML = `${filled}<span class="frac">${Math.min(roundCorrect, ROUND_LENGTH)}<span>/${ROUND_LENGTH}</span></span>`;
     document.getElementById('round-label').textContent = t('roundLabel');
     document.getElementById('rating-tooltip').innerHTML = t('ratingTooltip');
@@ -840,6 +845,7 @@
   function startNewRound() {
     roundIndex = 0;
     roundCorrect = 0;
+    roundResults = [];
     streak = 0;
     renderHome();
   }
@@ -914,6 +920,7 @@
     });
 
     if (isCorrect) { playCorrectSound(); } else { playIncorrectSound(); }
+    roundResults[roundIndex] = isCorrect;
     if (isCorrect) { roundCorrect += 1; streak += 1; } else { streak = 0; }
     roundIndex += 1;
     updateHud();
