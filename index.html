@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-<title>TopHost — El primer juego del mundo para hosts</title>
+<title>HeyRule — El primer juego del mundo para hosts</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -188,7 +188,7 @@
     <span style="width:36px; height:36px; border-radius:11px; overflow:hidden; display:flex; align-items:center; justify-content:center; flex:none;">
       <img src="android-chrome-192x192.png" alt="Keeper" style="width:100%; height:100%; object-fit:cover; display:block;" />
     </span>
-    <span>TopHost</span>
+    <span>HeyRule</span>
   </div>
   <div style="display:flex; gap:8px;">
     <button class="icon-btn" id="sources-btn" style="display:none;">
@@ -298,7 +298,7 @@
   };
 
   // ====== Traducciones de interfaz (i18n) ======
-  let lang = (typeof localStorage !== 'undefined' && localStorage.getItem('tophost_lang')) || 'es';
+  let lang = (typeof localStorage !== 'undefined' && localStorage.getItem('heyrule_lang')) || 'es';
 
   const I18N = {
     es: {
@@ -357,7 +357,7 @@
       rankingBtnTitle: 'Ranking',
       sourcesBtnTitle: 'Fuentes',
       sourcesTitle: 'Fuentes',
-      sourcesBody: 'Todas las preguntas de TopHost están basadas en documentación oficial de la plataforma, incluyendo: Condiciones de Servicio, Política de Privacidad, Políticas de la comunidad, Política contra la discriminación, Estándares para anfitriones, Políticas de cancelación, Políticas de contenido, Verificación de identidad, Registro de usuarios y anfitriones, Protección para anfitriones, Seguridad, Pagos, Coanfitriones y Centro de Recursos para Anfitriones.<br><br>El contenido se actualiza todo el tiempo y se reescribe para el formato de juego, pero no es una IA improvisando: cada pregunta está anclada en documentación oficial real y verificable, no en lo que un chatbot cree recordar sobre la plataforma.'
+      sourcesBody: 'Todas las preguntas de HeyRule están basadas en documentación oficial de la plataforma, incluyendo: Condiciones de Servicio, Política de Privacidad, Políticas de la comunidad, Política contra la discriminación, Estándares para anfitriones, Políticas de cancelación, Políticas de contenido, Verificación de identidad, Registro de usuarios y anfitriones, Protección para anfitriones, Seguridad, Pagos, Coanfitriones y Centro de Recursos para Anfitriones.<br><br>El contenido se actualiza todo el tiempo y se reescribe para el formato de juego, pero no es una IA improvisando: cada pregunta está anclada en documentación oficial real y verificable, no en lo que un chatbot cree recordar sobre la plataforma.'
     },
     en: {
       eyebrow: "The world's first game for hosts",
@@ -415,7 +415,7 @@
       rankingBtnTitle: 'Ranking',
       sourcesBtnTitle: 'Sources',
       sourcesTitle: 'Sources',
-      sourcesBody: "Every question in TopHost is based on the platform's official documentation, including: Terms of Service, Privacy Policy, Community Policies, Nondiscrimination Policy, Host Standards, Cancellation Policies, Content Policies, Identity Verification, Guest and Host Registration, Host Protection, Safety, Payments, Co-Hosting, and the Resource Center for Hosts.<br><br>The content gets updated constantly and gets rewritten for the game format, but this isn't an AI improvising: every question is anchored in real, verifiable official documentation — not in whatever a chatbot thinks it remembers about the platform."
+      sourcesBody: "Every question in HeyRule is based on the platform's official documentation, including: Terms of Service, Privacy Policy, Community Policies, Nondiscrimination Policy, Host Standards, Cancellation Policies, Content Policies, Identity Verification, Guest and Host Registration, Host Protection, Safety, Payments, Co-Hosting, and the Resource Center for Hosts.<br><br>The content gets updated constantly and gets rewritten for the game format, but this isn't an AI improvising: every question is anchored in real, verifiable official documentation — not in whatever a chatbot thinks it remembers about the platform."
     }
   };
 
@@ -423,7 +423,7 @@
 
   function setLang(l) {
     lang = l;
-    try { localStorage.setItem('tophost_lang', l); } catch (e) {}
+    try { localStorage.setItem('heyrule_lang', l); } catch (e) {}
     renderPresentation();
   }
 
@@ -586,9 +586,9 @@
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:11px; width:100%;">${chips}</div>
           <button class="primary-btn cta" id="start-btn" style="margin-top:4px;">${t('startBtn')}</button>
         </div>
-        <a href="https://www.instagram.com/tophost.fun" target="_blank" rel="noopener" style="margin-top:14px; display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.55); font:600 12.5px 'Hanken Grotesk';">
+        <a href="https://www.instagram.com/playheyrule" target="_blank" rel="noopener" style="margin-top:14px; display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.55); font:600 12.5px 'Hanken Grotesk';">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
-          @tophost.fun
+          @playheyrule
         </a>
         ${session ? `<button id="logout-link" style="margin-top:8px; border:none; background:none; padding:2px; font:600 12px 'Hanken Grotesk'; color:rgba(43,37,33,.4); cursor:pointer;">${t('exitTitle')}</button>` : ''}
       </div>
@@ -658,7 +658,7 @@
     const input = document.getElementById('nickname-input');
     const errorDiv = document.getElementById('nickname-error');
     const submitBtn = document.getElementById('nickname-submit-btn');
-    const RESERVED_NICKNAMES = ['tophost', 'tophostfun', 'superhost', 'airbnb'];
+    const RESERVED_NICKNAMES = ['tophost', 'tophostfun', 'superhost', 'airbnb', 'heyrule', 'keeper'];
 
     submitBtn.addEventListener('click', async () => {
       errorDiv.textContent = '';
