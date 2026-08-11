@@ -400,6 +400,7 @@
       modeSoonTitle: 'Este Modo todavía no tiene preguntas',
       modeSoonHint: 'Estamos cargando el contenido. Volvé pronto.',
       modeChange: 'Elegir otro Modo',
+      createdBy: 'Creado por',
       roundLabel: 'Ronda',
       girar: 'GIRAR',
       noQuestions: 'No hay preguntas cargadas para esta categoría todavía.',
@@ -464,6 +465,7 @@
       modeSoonTitle: 'This Mode has no questions yet',
       modeSoonHint: "We're loading the content. Check back soon.",
       modeChange: 'Choose another Mode',
+      createdBy: 'Created by',
       roundLabel: 'Round',
       girar: 'SPIN',
       noQuestions: 'There are no questions loaded for this category yet.',
@@ -684,6 +686,9 @@
         <a href="https://www.instagram.com/playheyrule" target="_blank" rel="noopener" style="margin-top:14px; display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.55); font:600 12.5px 'Hanken Grotesk';">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
           @playheyrule
+        </a>
+        <a href="https://www.arturoblas.com" target="_blank" rel="noopener" style="margin-top:6px; display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.4); font:600 11.5px 'Hanken Grotesk';">
+          ${t('createdBy')} Arturo Blas
         </a>
         ${session ? `<button id="logout-link" style="margin-top:8px; border:none; background:none; padding:2px; font:600 12px 'Hanken Grotesk'; color:rgba(43,37,33,.4); cursor:pointer;">${t('exitTitle')}</button>` : ''}
       </div>
