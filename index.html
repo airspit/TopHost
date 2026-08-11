@@ -289,19 +289,25 @@
     servicios: []
   };
 
+  let svgUidCounter = 0;
+  function renderModeIcon(mode) {
+    const uid = 'u' + (svgUidCounter++);
+    return mode.iconTemplate.replace(/\{\{UID\}\}/g, uid);
+  }
+
   const MODES = [
     {
       id: 'alojamiento', name: 'Alojamientos', name_en: 'Homes', word: 'Ir', word_en: 'Go',
       accent: '#D9633A',
-      icon: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Ir — Alojamientos">
+      iconTemplate: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Ir — Alojamientos">
         <defs>
-          <linearGradient id="modoDoorBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3A277"/><stop offset="1" stop-color="#D9633A"/></linearGradient>
-          <linearGradient id="modoDoorIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7A3018"/><stop offset="1" stop-color="#B85428"/></linearGradient>
+          <linearGradient id="modoDoorBody-{{UID}}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3A277"/><stop offset="1" stop-color="#D9633A"/></linearGradient>
+          <linearGradient id="modoDoorIn-{{UID}}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7A3018"/><stop offset="1" stop-color="#B85428"/></linearGradient>
         </defs>
         <ellipse cx="32" cy="57" rx="21" ry="3.2" fill="#8A4A22" opacity="0.16"/>
         <path d="M22 54 L15 60 L49 60 L42 54 Z" fill="#FFC978" opacity="0.9"/>
-        <path d="M14 54 V29 a18 18 0 0 1 36 0 V54 Z" fill="url(#modoDoorBody)"/>
-        <path d="M22 54 V30 a10 10 0 0 1 20 0 V54 Z" fill="url(#modoDoorIn)"/>
+        <path d="M14 54 V29 a18 18 0 0 1 36 0 V54 Z" fill="url(#modoDoorBody-{{UID}})"/>
+        <path d="M22 54 V30 a10 10 0 0 1 20 0 V54 Z" fill="url(#modoDoorIn-{{UID}})"/>
         <path d="M17.5 51 V30 a14.5 14.5 0 0 1 7.5 -12.4" stroke="#FFD9B6" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.75"/>
         <circle cx="45.5" cy="38" r="2.4" fill="#FFE2BE"/>
       </svg>`
@@ -309,14 +315,14 @@
     {
       id: 'experiencias', name: 'Experiencias', name_en: 'Experiences', word: 'Hacer', word_en: 'Do',
       accent: '#2E9FC7',
-      icon: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Hacer — Experiencias">
+      iconTemplate: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Hacer — Experiencias">
         <defs>
-          <linearGradient id="modoCompBody" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#6FDDF5"/><stop offset="1" stop-color="#2E9FC7"/></linearGradient>
-          <linearGradient id="modoCompDial" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E9"/><stop offset="1" stop-color="#F9DDBC"/></linearGradient>
+          <linearGradient id="modoCompBody-{{UID}}" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#6FDDF5"/><stop offset="1" stop-color="#2E9FC7"/></linearGradient>
+          <linearGradient id="modoCompDial-{{UID}}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E9"/><stop offset="1" stop-color="#F9DDBC"/></linearGradient>
         </defs>
         <ellipse cx="32" cy="57" rx="20" ry="3.2" fill="#1E6E8C" opacity="0.16"/>
-        <circle cx="32" cy="32" r="22" fill="url(#modoCompBody)"/>
-        <circle cx="32" cy="32" r="15.5" fill="url(#modoCompDial)"/>
+        <circle cx="32" cy="32" r="22" fill="url(#modoCompBody-{{UID}})"/>
+        <circle cx="32" cy="32" r="15.5" fill="url(#modoCompDial-{{UID}})"/>
         <circle cx="32" cy="13.6" r="2.2" fill="#FFF0D8"/>
         <path d="M15.5 26 a18 18 0 0 1 9 -10.5" stroke="#CFF4FF" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.8"/>
         <g transform="rotate(-20 32 32)">
@@ -329,12 +335,12 @@
     {
       id: 'servicios', name: 'Servicios', name_en: 'Services', word: 'Recibir', word_en: 'Receive',
       accent: '#7B45A8',
-      icon: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Recibir — Servicios">
+      iconTemplate: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Recibir — Servicios">
         <defs>
-          <linearGradient id="modoMagBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B57EDD"/><stop offset="1" stop-color="#7B45A8"/></linearGradient>
+          <linearGradient id="modoMagBody-{{UID}}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B57EDD"/><stop offset="1" stop-color="#7B45A8"/></linearGradient>
         </defs>
         <ellipse cx="32" cy="56" rx="19" ry="3.2" fill="#5B2E7E" opacity="0.16"/>
-        <path d="M19 22 V34 a13 13 0 0 0 26 0 V22" stroke="url(#modoMagBody)" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <path d="M19 22 V34 a13 13 0 0 0 26 0 V22" stroke="url(#modoMagBody-{{UID}})" stroke-width="11" fill="none" stroke-linecap="round"/>
         <path d="M15.5 30 V25" stroke="#D9B4F0" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
         <rect x="13.5" y="14" width="11" height="9" rx="3.4" fill="#F7B955"/>
         <rect x="39.5" y="14" width="11" height="9" rx="3.4" fill="#F7B955"/>
@@ -751,7 +757,7 @@
     const badge = document.getElementById('mode-badge-btn');
     const mode = MODES.find(m => m.id === currentMode);
     if (!badge || !mode) return;
-    badge.innerHTML = mode.icon;
+    badge.innerHTML = renderModeIcon(mode);
     badge.title = lang === 'en' ? mode.name_en : mode.name;
     badge.style.display = 'inline-flex';
   }
@@ -771,7 +777,7 @@
           cursor:${available ? 'pointer' : 'default'}; opacity:${available ? '1' : '.5'};
           box-shadow:0 2px 8px -3px rgba(43,37,33,.18);
         ">
-          <span style="width:64px; height:64px;">${m.icon}</span>
+          <span style="width:64px; height:64px;">${renderModeIcon(m)}</span>
           <span style="font:700 13.5px 'Hanken Grotesk'; color:var(--ink);">${name}</span>
           <span style="font:600 11.5px 'Hanken Grotesk'; color:${m.accent};">${available ? word : t('modeSoon')}</span>
         </button>
