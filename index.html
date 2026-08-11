@@ -191,6 +191,7 @@
     <span>HeyRule</span>
   </div>
   <div style="display:flex; gap:8px;">
+    <button class="icon-btn" id="mode-badge-btn" style="display:none; padding:4px;" title=""></button>
     <button class="icon-btn" id="sources-btn" style="display:none;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="10.5" x2="12" y2="16"/><circle cx="12" cy="7.3" r="0.6" fill="currentColor" stroke="none"/></svg>
     </button>
@@ -279,6 +280,72 @@
     { id: 'ecosistema', name: 'Ecosistema', name_en: 'Ecosystem', full: 'Ecosistema', tagline: 'Te convertís en un experto de la plataforma.', hex: '#E6A0E3', dark: '#C36FBF', icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9s1.3-6.5 3.8-9z"/>' }
   ];
 
+  // ====== MODOS: Alojamientos / Experiencias / Servicios ======
+  // Cada Modo agrupa su propio set de Categorías. Alojamiento ya tiene las 6 de siempre;
+  // Experiencias y Servicios arrancan vacíos hasta que se cargue contenido real para cada uno.
+  const CATEGORIES_BY_MODE = {
+    alojamiento: CATEGORIES,
+    experiencias: [],
+    servicios: []
+  };
+
+  const MODES = [
+    {
+      id: 'alojamiento', name: 'Alojamientos', name_en: 'Homes', word: 'Ir', word_en: 'Go',
+      accent: '#D9633A',
+      icon: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Ir — Alojamientos">
+        <defs>
+          <linearGradient id="modoDoorBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3A277"/><stop offset="1" stop-color="#D9633A"/></linearGradient>
+          <linearGradient id="modoDoorIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7A3018"/><stop offset="1" stop-color="#B85428"/></linearGradient>
+        </defs>
+        <ellipse cx="32" cy="57" rx="21" ry="3.2" fill="#8A4A22" opacity="0.16"/>
+        <path d="M22 54 L15 60 L49 60 L42 54 Z" fill="#FFC978" opacity="0.9"/>
+        <path d="M14 54 V29 a18 18 0 0 1 36 0 V54 Z" fill="url(#modoDoorBody)"/>
+        <path d="M22 54 V30 a10 10 0 0 1 20 0 V54 Z" fill="url(#modoDoorIn)"/>
+        <path d="M17.5 51 V30 a14.5 14.5 0 0 1 7.5 -12.4" stroke="#FFD9B6" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+        <circle cx="45.5" cy="38" r="2.4" fill="#FFE2BE"/>
+      </svg>`
+    },
+    {
+      id: 'experiencias', name: 'Experiencias', name_en: 'Experiences', word: 'Hacer', word_en: 'Do',
+      accent: '#2E9FC7',
+      icon: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Hacer — Experiencias">
+        <defs>
+          <linearGradient id="modoCompBody" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#6FDDF5"/><stop offset="1" stop-color="#2E9FC7"/></linearGradient>
+          <linearGradient id="modoCompDial" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E9"/><stop offset="1" stop-color="#F9DDBC"/></linearGradient>
+        </defs>
+        <ellipse cx="32" cy="57" rx="20" ry="3.2" fill="#1E6E8C" opacity="0.16"/>
+        <circle cx="32" cy="32" r="22" fill="url(#modoCompBody)"/>
+        <circle cx="32" cy="32" r="15.5" fill="url(#modoCompDial)"/>
+        <circle cx="32" cy="13.6" r="2.2" fill="#FFF0D8"/>
+        <path d="M15.5 26 a18 18 0 0 1 9 -10.5" stroke="#CFF4FF" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+        <g transform="rotate(-20 32 32)">
+          <path d="M32 18.5 L38.5 32 L25.5 32 Z" fill="#FF5A44"/>
+          <path d="M32 45.5 L38.5 32 L25.5 32 Z" fill="#F6C48E"/>
+        </g>
+        <circle cx="32" cy="32" r="2.8" fill="#8A3A1E"/>
+      </svg>`
+    },
+    {
+      id: 'servicios', name: 'Servicios', name_en: 'Services', word: 'Recibir', word_en: 'Receive',
+      accent: '#7B45A8',
+      icon: `<svg viewBox="0 0 64 64" width="100%" height="100%" role="img" aria-label="Recibir — Servicios">
+        <defs>
+          <linearGradient id="modoMagBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B57EDD"/><stop offset="1" stop-color="#7B45A8"/></linearGradient>
+        </defs>
+        <ellipse cx="32" cy="56" rx="19" ry="3.2" fill="#5B2E7E" opacity="0.16"/>
+        <path d="M19 22 V34 a13 13 0 0 0 26 0 V22" stroke="url(#modoMagBody)" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <path d="M15.5 30 V25" stroke="#D9B4F0" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <rect x="13.5" y="14" width="11" height="9" rx="3.4" fill="#F7B955"/>
+        <rect x="39.5" y="14" width="11" height="9" rx="3.4" fill="#F7B955"/>
+        <circle cx="32" cy="10.5" r="4.6" fill="#F7B955"/>
+        <circle cx="30.4" cy="9" r="1.5" fill="#FFE6BC"/>
+        <path d="M25 3.5 L23.6 6.5" stroke="#E5A34B" stroke-width="2.4" stroke-linecap="round" opacity="0.65"/>
+        <path d="M39 3.5 L40.4 6.5" stroke="#E5A34B" stroke-width="2.4" stroke-linecap="round" opacity="0.65"/>
+      </svg>`
+    }
+  ];
+
   const FALLBACK_QUESTIONS = {
     espacio: [{ question: '¿Qué debe reflejar la foto de portada de tu listing?', options: ['Una imagen genérica', 'El espacio real', 'Una foto tuya', 'Tu logo'], correct_index: 1, explanation: 'La foto de portada debe mostrar honestamente el espacio real.' }],
     hospitalidad: [{ question: '¿Qué mejora tu ranking relacionado a mensajería?', options: ['Responder rápido', 'Ignorar mensajes', 'Responder tarde', 'No afecta'], correct_index: 0, explanation: 'Airbnb favorece a quienes responden rápido.' }],
@@ -327,6 +394,12 @@
       ratingTooltip: 'Tu rating es el <b>promedio de todas tus partidas</b>. Cada partida puede darte hasta 5 estrellas. Cuantas más respuestas correctas tengas, mayor será tu promedio.',
       homeTitle: '¡Convertite en un verdadero Top Host!',
       homeHint: 'Jugá y posicionate en el ranking global.',
+      modeTitle: '¿Con qué Modo jugás?',
+      modeHint: 'Elegí tu perfil de anfitrión para empezar.',
+      modeSoon: 'Próximamente',
+      modeSoonTitle: 'Este Modo todavía no tiene preguntas',
+      modeSoonHint: 'Estamos cargando el contenido. Volvé pronto.',
+      modeChange: 'Elegir otro Modo',
       roundLabel: 'Ronda',
       girar: 'GIRAR',
       noQuestions: 'No hay preguntas cargadas para esta categoría todavía.',
@@ -385,6 +458,12 @@
       ratingTooltip: 'Your rating is the <b>average of all your rounds</b>. Each round can earn you up to 5 stars. The more correct answers you get, the higher your average.',
       homeTitle: 'Become a true Top Host!',
       homeHint: 'Play and climb the global ranking.',
+      modeTitle: 'Which Mode are you playing?',
+      modeHint: 'Pick your host profile to get started.',
+      modeSoon: 'Coming soon',
+      modeSoonTitle: 'This Mode has no questions yet',
+      modeSoonHint: "We're loading the content. Check back soon.",
+      modeChange: 'Choose another Mode',
       roundLabel: 'Round',
       girar: 'SPIN',
       noQuestions: 'There are no questions loaded for this category yet.',
@@ -496,7 +575,22 @@
   let roundResults = [];   // resultado de cada pregunta de la ronda: true, false, o undefined (sin responder)
   let streak = 0;
   let currentCategory = null, currentQuestion = null;
+  let currentMode = null;  // 'alojamiento' | 'experiencias' | 'servicios'
   let questionsCache = {};
+
+  function getModeKey() {
+    return player ? `heyrule_mode_${player.id}` : null;
+  }
+  function loadSavedMode() {
+    const key = getModeKey();
+    if (!key) return null;
+    const saved = localStorage.getItem(key);
+    return MODES.some(m => m.id === saved) ? saved : null;
+  }
+  function saveMode(modeId) {
+    const key = getModeKey();
+    if (key) localStorage.setItem(key, modeId);
+  }
 
   const main = document.getElementById('main');
   const hud = document.getElementById('hud');
@@ -516,6 +610,7 @@
     hud.style.display = 'none';
     rankingBtn.style.display = 'none';
     sourcesBtn.style.display = 'none';
+    document.getElementById('mode-badge-btn').style.display = 'none';
     renderPresentation();
   });
 
@@ -625,8 +720,73 @@
     if (!player.nickname) {
       renderNicknamePrompt();
     } else {
-      renderHome();
+      goToModeOrHome();
     }
+  }
+
+  function goToModeOrHome() {
+    const saved = loadSavedMode();
+    if (saved) {
+      currentMode = saved;
+      updateModeBadge();
+      renderHome();
+    } else {
+      renderModeSelect();
+    }
+  }
+
+  function selectMode(modeId) {
+    currentMode = modeId;
+    saveMode(modeId);
+    updateModeBadge();
+    startNewRound();
+  }
+
+  function updateModeBadge() {
+    const badge = document.getElementById('mode-badge-btn');
+    const mode = MODES.find(m => m.id === currentMode);
+    if (!badge || !mode) return;
+    badge.innerHTML = mode.icon;
+    badge.title = lang === 'en' ? mode.name_en : mode.name;
+    badge.style.display = 'inline-flex';
+  }
+
+  function renderModeSelect() {
+    hud.style.display = 'none';
+    document.getElementById('mode-badge-btn').style.display = 'none';
+    const cardsHtml = MODES.map(m => {
+      const cats = CATEGORIES_BY_MODE[m.id] || [];
+      const available = cats.length > 0;
+      const name = lang === 'en' ? m.name_en : m.name;
+      const word = lang === 'en' ? m.word_en : m.word;
+      return `
+        <button class="mode-card" data-mode="${m.id}" ${available ? '' : 'disabled'} style="
+          display:flex; flex-direction:column; align-items:center; gap:8px;
+          background:var(--card); border:none; border-radius:18px; padding:16px 10px 14px;
+          cursor:${available ? 'pointer' : 'default'}; opacity:${available ? '1' : '.5'};
+          box-shadow:0 2px 8px -3px rgba(43,37,33,.18);
+        ">
+          <span style="width:64px; height:64px;">${m.icon}</span>
+          <span style="font:700 13.5px 'Hanken Grotesk'; color:var(--ink);">${name}</span>
+          <span style="font:600 11.5px 'Hanken Grotesk'; color:${m.accent};">${available ? word : t('modeSoon')}</span>
+        </button>
+      `;
+    }).join('');
+
+    main.innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:center; flex:1; width:100%; justify-content:center;">
+        ${keeperImg('bienvenida', 84)}
+        <div class="home-title" style="font-size:20px; margin-top:8px;">${t('modeTitle')}</div>
+        <p class="hint" style="margin-top:2px;">${t('modeHint')}</p>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; width:100%; margin-top:20px;">
+          ${cardsHtml}
+        </div>
+      </div>
+    `;
+    document.querySelectorAll('.mode-card').forEach(btn => {
+      if (btn.disabled) return;
+      btn.addEventListener('click', () => selectMode(btn.dataset.mode));
+    });
   }
 
   async function loadOrCreatePlayer() {
@@ -688,9 +848,11 @@
         return;
       }
       player.nickname = raw;
-      renderHome();
+      goToModeOrHome();
     });
   }
+
+  document.getElementById('mode-badge-btn').addEventListener('click', renderModeSelect);
 
   rankingBtn.addEventListener('click', renderRanking);
 
@@ -808,15 +970,32 @@
   }
 
   function renderHome() {
+    hud.style.display = 'flex';
     updateHud();
-    const gradient = CATEGORIES.map((c, i) => {
-      const start = (i * 100) / CATEGORIES.length;
-      const end = ((i + 1) * 100) / CATEGORIES.length;
+    updateModeBadge();
+    const cats = CATEGORIES_BY_MODE[currentMode] || [];
+
+    if (cats.length === 0) {
+      main.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; flex:1; width:100%; justify-content:center;">
+          ${keeperImg('bienvenida', 100)}
+          <div class="home-title" style="margin-top:8px;">${t('modeSoonTitle')}</div>
+          <p class="hint" style="margin-top:2px;">${t('modeSoonHint')}</p>
+          <button class="primary-btn dark" id="back-to-mode-btn" style="margin-top:16px;">${t('modeChange')}</button>
+        </div>
+      `;
+      document.getElementById('back-to-mode-btn').addEventListener('click', renderModeSelect);
+      return;
+    }
+
+    const gradient = cats.map((c, i) => {
+      const start = (i * 100) / cats.length;
+      const end = ((i + 1) * 100) / cats.length;
       return `${c.hex} ${start}% ${end}%`;
     }).join(', ');
 
-    const sliceAngle = 360 / CATEGORIES.length;
-    const iconsHtml = CATEGORIES.map((c, i) => {
+    const sliceAngle = 360 / cats.length;
+    const iconsHtml = cats.map((c, i) => {
       const angle = sliceAngle * i + sliceAngle / 2;
       return `<span class="wheel-icon" style="transform:rotate(${angle}deg) translateY(-77px) rotate(-${angle}deg);">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${c.dark}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
@@ -858,8 +1037,9 @@
     if (keeperEl) keeperEl.classList.add('kp-lean');
     playSpinSound(3.3);
 
-    const randomIndex = Math.floor(Math.random() * CATEGORIES.length);
-    const sliceAngle = 360 / CATEGORIES.length;
+    const cats = CATEGORIES_BY_MODE[currentMode] || [];
+    const randomIndex = Math.floor(Math.random() * cats.length);
+    const sliceAngle = 360 / cats.length;
     const extraSpins = 5 * 360;
     const targetAngle = extraSpins + (360 - randomIndex * sliceAngle - sliceAngle / 2);
     wheel.style.transform = `rotate(${targetAngle}deg)`;
@@ -869,7 +1049,7 @@
         keeperEl.classList.remove('kp-lean');
         keeperEl.classList.add('kp-celebrate');
       }
-      currentCategory = CATEGORIES[randomIndex];
+      currentCategory = cats[randomIndex];
       const questions = await fetchQuestions(currentCategory.id);
       const picked = questions[Math.floor(Math.random() * questions.length)];
       currentQuestion = shuffleQuestionOptions(picked);
