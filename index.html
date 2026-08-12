@@ -433,6 +433,9 @@
       modeChange: 'Elegir otro Modo',
       createdBy: 'Creado por',
       rightsReserved: 'Todos los derechos reservados.',
+      shareCta: 'Jugá vos también',
+      shareBtn: 'Compartir logro',
+      generatingCard: 'Generando...',
       roundLabel: 'Ronda',
       girar: 'GIRAR',
       noQuestions: 'No hay preguntas cargadas para esta categoría todavía.',
@@ -499,6 +502,9 @@
       modeChange: 'Choose another Mode',
       createdBy: 'Created by',
       rightsReserved: 'All rights reserved.',
+      shareCta: 'Play it too',
+      shareBtn: 'Share achievement',
+      generatingCard: 'Generating...',
       roundLabel: 'Round',
       girar: 'SPIN',
       noQuestions: 'There are no questions loaded for this category yet.',
@@ -592,6 +598,167 @@
   function keeperImg(pose, size, animClass) {
     const wrapClass = 'keeper-wrap' + (animClass ? ' ' + animClass : '');
     return `<div class="${wrapClass}"><img src="keeper-${pose}.png" alt="Keeper" style="width:${size}px; height:auto; display:block; margin:0 auto;" /></div>`;
+  }
+
+  // ====== TARJETA COMPARTIBLE (canvas, formato feed 4:5) ======
+  function loadImageAsync(src) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null); // si falla, seguimos sin la imagen en vez de romper todo
+      img.src = src;
+    });
+  }
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  async function buildShareCard(type) {
+    const W = 1080, H = 1350;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // fondo cálido en degradé
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#FFF6E7');
+    bgGrad.addColorStop(1, '#FBDFAE');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    const mode = MODES.find(m => m.id === currentMode) || MODES[0];
+    const modeName = lang === 'en' ? mode.name_en : mode.name;
+
+    // wordmark HeyRule
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = "800 52px 'Baloo 2'";
+    ctx.fillStyle = '#2B2521';
+    ctx.fillText('Hey', 72, 128);
+    const heyW = ctx.measureText('Hey').width;
+    ctx.fillStyle = '#FF385C';
+    ctx.fillText('Rule', 72 + heyW, 128);
+
+    // chip de Modo, arriba a la derecha
+    ctx.font = "700 28px 'Hanken Grotesk'";
+    const chipPad = 26, chipDot = 18, chipH = 64;
+    const chipTextW = ctx.measureText(modeName).width;
+    const chipW = chipTextW + chipPad * 2 + chipDot + 12;
+    const chipX = W - 72 - chipW, chipY = 66;
+    ctx.fillStyle = '#FFFFFF';
+    roundRectPath(ctx, chipX, chipY, chipW, chipH, chipH / 2);
+    ctx.fill();
+    ctx.fillStyle = mode.accent;
+    ctx.beginPath();
+    ctx.arc(chipX + chipPad + chipDot / 2, chipY + chipH / 2, chipDot / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#2B2521';
+    ctx.fillText(modeName, chipX + chipPad + chipDot + 12, chipY + chipH / 2 + 10);
+
+    // Keeper festejando
+    const keeperPose = type === 'perfect' ? 'nivel' : 'racha';
+    const keeper = await loadImageAsync(`keeper-${keeperPose}.png`);
+    if (keeper) {
+      const kW = 480;
+      const kH = kW * (keeper.height / keeper.width);
+      ctx.drawImage(keeper, (W - kW) / 2, 190, kW, kH);
+    }
+
+    ctx.textAlign = 'center';
+    let y = 780;
+
+    if (type === 'perfect') {
+      const catName = lang === 'en' ? currentCategory.name_en : currentCategory.name;
+      ctx.font = "800 34px 'Hanken Grotesk'";
+      ctx.fillStyle = '#FF385C';
+      ctx.fillText(t('perfectRound').toUpperCase(), W / 2, y);
+      y += 130;
+      ctx.font = "800 190px 'Baloo 2'";
+      ctx.fillStyle = '#2B2521';
+      ctx.fillText(`${roundCorrect}/${ROUND_LENGTH}`, W / 2, y);
+      y += 90;
+      // chip de categoría
+      ctx.font = "700 32px 'Hanken Grotesk'";
+      const catTextW = ctx.measureText(catName).width;
+      const catChipW = catTextW + 96;
+      roundRectPath(ctx, W / 2 - catChipW / 2, y - 46, catChipW, 72, 36);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.fillStyle = currentCategory.hex;
+      ctx.beginPath();
+      ctx.arc(W / 2 - catChipW / 2 + 44, y - 10, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2B2521';
+      ctx.textAlign = 'left';
+      ctx.fillText(catName, W / 2 - catChipW / 2 + 70, y);
+      ctx.textAlign = 'center';
+      y += 110;
+    } else {
+      ctx.font = "700 32px 'Hanken Grotesk'";
+      ctx.fillStyle = '#8A7A5C';
+      ctx.fillText('★ ' + Number(modeStats.rating).toFixed(2), W / 2, y);
+      y += 70;
+      ctx.font = "800 68px 'Baloo 2'";
+      ctx.fillStyle = '#FF385C';
+      ctx.fillText(t('favWithHosts'), W / 2, y);
+      y += 90;
+    }
+
+    // botón CTA "Jugá vos también"
+    const ctaText = t('shareCta');
+    ctx.font = "800 36px 'Baloo 2'";
+    const ctaTextW = ctx.measureText(ctaText).width;
+    const ctaW = ctaTextW + 120, ctaH = 100;
+    const ctaX = W / 2 - ctaW / 2, ctaY = y;
+    ctx.fillStyle = '#FF385C';
+    roundRectPath(ctx, ctaX, ctaY, ctaW, ctaH, ctaH / 2);
+    ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(ctaText, W / 2, ctaY + ctaH / 2 + 13);
+    y = ctaY + ctaH + 56;
+
+    // @playheyrule
+    ctx.font = "700 30px 'Hanken Grotesk'";
+    ctx.fillStyle = 'rgba(43,37,33,.5)';
+    ctx.fillText('@playheyrule', W / 2, y);
+
+    return canvas;
+  }
+
+  async function shareResultCard(type, btnEl) {
+    const originalText = btnEl.textContent;
+    btnEl.textContent = t('generatingCard');
+    btnEl.disabled = true;
+    try {
+      const canvas = await buildShareCard(type);
+      canvas.toBlob(async (blob) => {
+        if (!blob) { btnEl.textContent = originalText; btnEl.disabled = false; return; }
+        const file = new File([blob], 'heyrule.png', { type: 'image/png' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: 'HeyRule' });
+          } catch (e) { /* el usuario canceló el share nativo, no hacemos nada */ }
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'heyrule.png';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+        btnEl.textContent = originalText;
+        btnEl.disabled = false;
+      }, 'image/png');
+    } catch (e) {
+      btnEl.textContent = originalText;
+      btnEl.disabled = false;
+    }
   }
 
 
@@ -1304,6 +1471,9 @@
       footerHint = t('raiseRating')(FAVORITE_MIN_RATING.toFixed(2));
     }
 
+    const showShare = wasPerfect || isFavorito;
+    const shareType = wasPerfect ? 'perfect' : 'favorite';
+
     main.innerHTML = `
       <div class="result-tag" style="color:${wasPerfect ? '#3F9A40' : (roundStars === 0 ? 'var(--c-reservas)' : 'var(--ink)')}">${wasPerfect ? t('perfectRound') : t('roundOver')}</div>
       <div style="position:relative; display:inline-block;">
@@ -1315,8 +1485,16 @@
       ${showDelta ? `<div class="rating-delta ${deltaClass}">${deltaSign}${ratingDelta.toFixed(2)} ${t('thisRound')}</div>` : ''}
       <p class="hint">${footerHint}</p>
       <button class="primary-btn cta" id="again-btn">${t('playAgain')}</button>
+      ${showShare ? `<button class="primary-btn dark" id="share-btn" style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>
+        ${t('shareBtn')}
+      </button>` : ''}
     `;
     document.getElementById('again-btn').addEventListener('click', startNewRound);
+    if (showShare) {
+      const shareBtn = document.getElementById('share-btn');
+      shareBtn.addEventListener('click', () => shareResultCard(shareType, shareBtn));
+    }
   }
 
   init();
