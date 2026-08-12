@@ -701,10 +701,18 @@
             ${t('eyebrow')}
           </div>
           <div style="margin-top:10px;">
-            ${keeperImg('bienvenida', 108)}
+            ${keeperImg('bienvenida', 132)}
           </div>
           <div class="home-title" style="font-size:24px; margin-top:10px;">${t('heroTitle')}</div>
-          <button class="primary-btn cta" id="start-btn" style="margin-top:16px;">${t('startBtn')}</button>
+          <div style="display:flex; gap:22px; margin-top:16px;">
+            ${MODES.map(m => `
+              <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+                <span style="width:34px; height:34px;">${renderModeIcon(m)}</span>
+                <span style="font:700 10px 'Hanken Grotesk'; color:rgba(43,37,33,.55); text-transform:uppercase; letter-spacing:.2px;">${lang === 'en' ? m.name_en : m.name}</span>
+              </div>
+            `).join('')}
+          </div>
+          <button class="primary-btn cta" id="start-btn" style="margin-top:18px;">${t('startBtn')}</button>
         </div>
         <div style="display:flex; flex-direction:column; align-items:center;">
           <a href="https://www.instagram.com/playheyrule" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:7px; text-decoration:none; color:rgba(43,37,33,.6); font:700 14px 'Hanken Grotesk';">
