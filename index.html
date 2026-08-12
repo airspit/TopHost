@@ -296,7 +296,13 @@
   // Experiencias y Servicios arrancan vacíos hasta que se cargue contenido real para cada uno.
   const CATEGORIES_BY_MODE = {
     alojamiento: CATEGORIES,
-    experiencias: [],
+    experiencias: [
+      { id: 'exp_lugar', name: 'Lugar', name_en: 'Place', hex: '#E8784A', dark: '#B4542E', icon: '<path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2"/>' },
+      { id: 'exp_actividad', name: 'Actividad', name_en: 'Activity', hex: '#6BCB6B', dark: '#3FA23F', icon: '<path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>' },
+      { id: 'exp_trayectoria', name: 'Trayectoria', name_en: 'Track record', hex: '#9B63C2', dark: '#8348AE', icon: '<circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L6 22l6-3 6 3-2.5-8.5"/>' },
+      { id: 'exp_seguridad', name: 'Seguridad', name_en: 'Safety', hex: '#4CC3E8', dark: '#2597BE', icon: '<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>' },
+      { id: 'exp_anfitrion', name: 'Anfitrión', name_en: 'Host', hex: '#F5DE50', dark: '#C79A00', icon: '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>' }
+    ],
     servicios: []
   };
 
