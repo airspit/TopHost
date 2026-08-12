@@ -436,6 +436,7 @@
       shareCta: 'Jugá vos también',
       shareBtn: 'Compartir logro',
       generatingCard: 'Generando...',
+      ratingLabel: 'rating de host',
       roundLabel: 'Ronda',
       girar: 'GIRAR',
       noQuestions: 'No hay preguntas cargadas para esta categoría todavía.',
@@ -505,6 +506,7 @@
       shareCta: 'Play it too',
       shareBtn: 'Share achievement',
       generatingCard: 'Generating...',
+      ratingLabel: 'host rating',
       roundLabel: 'Round',
       girar: 'SPIN',
       noQuestions: 'There are no questions loaded for this category yet.',
@@ -621,7 +623,7 @@
   }
 
   async function buildShareCard(type) {
-    const W = 1080, H = 1350;
+    const W = 1080, H = 1920;
     const canvas = document.createElement('canvas');
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext('2d');
@@ -639,19 +641,19 @@
     // wordmark HeyRule
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = "800 52px 'Baloo 2'";
+    ctx.font = "800 56px 'Baloo 2'";
     ctx.fillStyle = '#2B2521';
-    ctx.fillText('Hey', 72, 128);
+    ctx.fillText('Hey', 80, 150);
     const heyW = ctx.measureText('Hey').width;
     ctx.fillStyle = '#FF385C';
-    ctx.fillText('Rule', 72 + heyW, 128);
+    ctx.fillText('Rule', 80 + heyW, 150);
 
-    // chip de Modo, arriba a la derecha
-    ctx.font = "700 28px 'Hanken Grotesk'";
-    const chipPad = 26, chipDot = 18, chipH = 64;
+    // badge de Modo, arriba a la derecha — solo ícono + nombre, sin categoría
+    ctx.font = "700 30px 'Hanken Grotesk'";
+    const chipPad = 26, chipDot = 20, chipH = 68;
     const chipTextW = ctx.measureText(modeName).width;
-    const chipW = chipTextW + chipPad * 2 + chipDot + 12;
-    const chipX = W - 72 - chipW, chipY = 66;
+    const chipW = chipTextW + chipPad * 2 + chipDot + 14;
+    const chipX = W - 80 - chipW, chipY = 90;
     ctx.fillStyle = '#FFFFFF';
     roundRectPath(ctx, chipX, chipY, chipW, chipH, chipH / 2);
     ctx.fill();
@@ -660,74 +662,57 @@
     ctx.arc(chipX + chipPad + chipDot / 2, chipY + chipH / 2, chipDot / 2, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#2B2521';
-    ctx.fillText(modeName, chipX + chipPad + chipDot + 12, chipY + chipH / 2 + 10);
+    ctx.fillText(modeName, chipX + chipPad + chipDot + 14, chipY + chipH / 2 + 11);
 
-    // Keeper festejando
+    // Keeper festejando, grande y centrado
     const keeperPose = type === 'perfect' ? 'nivel' : 'racha';
     const keeper = await loadImageAsync(`keeper-${keeperPose}.png`);
     if (keeper) {
-      const kW = 480;
+      const kW = 620;
       const kH = kW * (keeper.height / keeper.width);
-      ctx.drawImage(keeper, (W - kW) / 2, 190, kW, kH);
+      ctx.drawImage(keeper, (W - kW) / 2, 340, kW, kH);
     }
 
     ctx.textAlign = 'center';
-    let y = 780;
+    let y = 1230;
 
     if (type === 'perfect') {
-      const catName = lang === 'en' ? currentCategory.name_en : currentCategory.name;
-      ctx.font = "800 34px 'Hanken Grotesk'";
+      ctx.font = "800 40px 'Hanken Grotesk'";
       ctx.fillStyle = '#FF385C';
       ctx.fillText(t('perfectRound').toUpperCase(), W / 2, y);
-      y += 130;
-      ctx.font = "800 190px 'Baloo 2'";
+      y += 150;
+      ctx.font = "800 130px 'Baloo 2'";
       ctx.fillStyle = '#2B2521';
       ctx.fillText(`${roundCorrect}/${ROUND_LENGTH}`, W / 2, y);
-      y += 90;
-      // chip de categoría
-      ctx.font = "700 32px 'Hanken Grotesk'";
-      const catTextW = ctx.measureText(catName).width;
-      const catChipW = catTextW + 96;
-      roundRectPath(ctx, W / 2 - catChipW / 2, y - 46, catChipW, 72, 36);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fill();
-      ctx.fillStyle = currentCategory.hex;
-      ctx.beginPath();
-      ctx.arc(W / 2 - catChipW / 2 + 44, y - 10, 11, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#2B2521';
-      ctx.textAlign = 'left';
-      ctx.fillText(catName, W / 2 - catChipW / 2 + 70, y);
-      ctx.textAlign = 'center';
-      y += 110;
+      y += 130;
     } else {
-      ctx.font = "700 32px 'Hanken Grotesk'";
+      ctx.font = "700 34px 'Hanken Grotesk'";
       ctx.fillStyle = '#8A7A5C';
-      ctx.fillText('★ ' + Number(modeStats.rating).toFixed(2), W / 2, y);
-      y += 70;
-      ctx.font = "800 68px 'Baloo 2'";
+      ctx.fillText('★ ' + Number(modeStats.rating).toFixed(2) + ' — ' + t('ratingLabel'), W / 2, y);
+      y += 90;
+      ctx.font = "800 70px 'Baloo 2'";
       ctx.fillStyle = '#FF385C';
       ctx.fillText(t('favWithHosts'), W / 2, y);
-      y += 90;
+      y += 110;
     }
 
     // botón CTA "Jugá vos también"
     const ctaText = t('shareCta');
-    ctx.font = "800 36px 'Baloo 2'";
+    ctx.font = "800 38px 'Baloo 2'";
     const ctaTextW = ctx.measureText(ctaText).width;
-    const ctaW = ctaTextW + 120, ctaH = 100;
+    const ctaW = ctaTextW + 128, ctaH = 104;
     const ctaX = W / 2 - ctaW / 2, ctaY = y;
     ctx.fillStyle = '#FF385C';
     roundRectPath(ctx, ctaX, ctaY, ctaW, ctaH, ctaH / 2);
     ctx.fill();
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText(ctaText, W / 2, ctaY + ctaH / 2 + 13);
-    y = ctaY + ctaH + 56;
+    y = ctaY + ctaH + 64;
 
-    // @playheyrule
-    ctx.font = "700 30px 'Hanken Grotesk'";
-    ctx.fillStyle = 'rgba(43,37,33,.5)';
-    ctx.fillText('@playheyrule', W / 2, y);
+    // heyrule.com — es la puerta real de entrada al juego
+    ctx.font = "700 32px 'Hanken Grotesk'";
+    ctx.fillStyle = 'rgba(43,37,33,.55)';
+    ctx.fillText('heyrule.com', W / 2, y);
 
     return canvas;
   }
