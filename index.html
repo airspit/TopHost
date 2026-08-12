@@ -50,16 +50,16 @@
   @keyframes popIn { 0% { opacity: 0; transform: scale(.8) translateY(6px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
   @keyframes tagPop { 0% { opacity: 0; transform: scale(.7) translateY(-10px); } 55% { opacity: 1; transform: scale(1.09) translateY(2px); } 80% { transform: scale(.97) translateY(0); } 100% { transform: scale(1) translateY(0); } }
   @keyframes fadeUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-  @keyframes doorSwing { 0%, 100% { transform: rotate(0deg) scaleX(1); } 50% { transform: rotate(-17deg) scaleX(.8); } }
+  @keyframes doorKnobTurn { 0%, 100% { opacity: 1; transform: scale(1); } 45% { opacity: .55; transform: scale(.8); } 55% { opacity: 1; transform: scale(1.25); } }
   @keyframes doorLightGrow { 0%, 100% { opacity: .55; transform: scaleX(1); } 50% { opacity: .95; transform: scaleX(1.3); } }
   @keyframes needleSeek { 0%, 100% { transform: rotate(-33deg); } 50% { transform: rotate(-5deg); } }
   @keyframes spherePull { 0%, 100% { transform: translate(0, 0); } 18% { transform: translate(-1.4px, 1px); } 32% { transform: translate(1.4px, 2.3px); } 46% { transform: translate(-1px, 3.6px); } 60% { transform: translate(1px, 2.2px); } 78% { transform: translate(-0.6px, 1px); } }
-  .icon-door-leaf { transform-box: view-box; transform-origin: 22px 54px; animation: doorSwing 2.2s ease-in-out infinite; }
-  .icon-door-light { transform-box: fill-box; transform-origin: left; animation: doorLightGrow 2.2s ease-in-out infinite; }
+  .icon-door-knob { transform-box: fill-box; transform-origin: center; animation: doorKnobTurn 2s ease-in-out infinite; }
+  .icon-door-light { transform-box: fill-box; transform-origin: left; animation: doorLightGrow 2s ease-in-out infinite; }
   .icon-compass-needle { transform-box: view-box; transform-origin: 32px 32px; animation: needleSeek 1.8s ease-in-out infinite; }
   .icon-magnet-sphere { transform-box: fill-box; transform-origin: center; animation: spherePull 1.7s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) {
-    .icon-door-leaf, .icon-door-light, .icon-compass-needle, .icon-magnet-sphere { animation: none; }
+    .icon-door-knob, .icon-door-light, .icon-compass-needle, .icon-magnet-sphere { animation: none; }
   }
 
   .keeper-wrap { display: inline-block; animation: bob 2.6s ease-in-out infinite, popIn .4s cubic-bezier(.22,1,.36,1); transform-origin: 50% 92%; }
@@ -318,10 +318,8 @@
         <ellipse cx="32" cy="57" rx="21" ry="3.2" fill="#8A4A22" opacity="0.16"/>
         <path d="M22 54 L15 60 L49 60 L42 54 Z" class="icon-door-light" fill="#FFC978" opacity="0.9"/>
         <path d="M14 54 V29 a18 18 0 0 1 36 0 V54 Z" fill="url(#modoDoorBody-{{UID}})"/>
-        <g class="icon-door-leaf">
-          <path d="M22 54 V30 a10 10 0 0 1 20 0 V54 Z" fill="url(#modoDoorIn-{{UID}})"/>
-          <circle cx="45.5" cy="38" r="2.4" fill="#FFE2BE"/>
-        </g>
+        <path d="M22 54 V30 a10 10 0 0 1 20 0 V54 Z" fill="url(#modoDoorIn-{{UID}})"/>
+        <circle cx="45.5" cy="38" r="2.4" class="icon-door-knob" fill="#FFE2BE"/>
         <path d="M17.5 51 V30 a14.5 14.5 0 0 1 7.5 -12.4" stroke="#FFD9B6" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.75"/>
       </svg>`
     },
