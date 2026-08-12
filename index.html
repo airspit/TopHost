@@ -804,7 +804,9 @@
         ">
           <span style="width:64px; height:64px;">${renderModeIcon(m)}</span>
           <span style="font:700 13.5px 'Hanken Grotesk'; color:var(--ink);">${name}</span>
-          <span style="font:600 11.5px 'Hanken Grotesk'; color:${m.accent};">${available ? word : t('modeSoon')}</span>
+          ${available
+            ? `<span style="font:800 17px 'Baloo 2'; color:${m.accent}; letter-spacing:.2px;">${word}</span>`
+            : `<span style="font:600 11.5px 'Hanken Grotesk'; color:${m.accent};">${t('modeSoon')}</span>`}
         </button>
       `;
     }).join('');
