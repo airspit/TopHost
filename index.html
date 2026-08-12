@@ -611,7 +611,14 @@
   let streak = 0;
   let currentCategory = null, currentQuestion = null;
   let currentMode = null;  // 'alojamiento' | 'experiencias' | 'servicios'
+  let modeStats = { rating: 0, total_reviews: 0 }; // stats del jugador para el Modo activo
   let questionsCache = {};
+
+  async function loadModeStats() {
+    if (!player || !currentMode) { modeStats = { rating: 0, total_reviews: 0 }; return; }
+    const { data } = await supabaseClient.from('player_stats').select('*').eq('player_id', player.id).eq('modo', currentMode).maybeSingle();
+    modeStats = data ? { rating: Number(data.rating), total_reviews: data.total_reviews } : { rating: 0, total_reviews: 0 };
+  }
 
   function getModeKey() {
     return player ? `heyrule_mode_${player.id}` : null;
@@ -670,7 +677,7 @@
   });
 
   function updateHud() {
-    ratingDisplay.textContent = player.total_reviews > 0 ? Number(player.rating).toFixed(2) : '—';
+    ratingDisplay.textContent = modeStats.total_reviews > 0 ? Number(modeStats.rating).toFixed(2) : '—';
     const filled = Array.from({length: ROUND_LENGTH}, (_, i) => {
       if (roundResults[i] === true) return starSVG(true, 19, '#F5C020');
       if (roundResults[i] === false) return starSVG(true, 19, '#6E665A');
@@ -763,21 +770,23 @@
     }
   }
 
-  function goToModeOrHome() {
+  async function goToModeOrHome() {
     const saved = loadSavedMode();
     if (saved) {
       currentMode = saved;
       updateModeBadge();
+      await loadModeStats();
       renderHome();
     } else {
       renderModeSelect();
     }
   }
 
-  function selectMode(modeId) {
+  async function selectMode(modeId) {
     currentMode = modeId;
     saveMode(modeId);
     updateModeBadge();
+    await loadModeStats();
     startNewRound();
   }
 
@@ -895,11 +904,12 @@
 
   document.getElementById('mode-badge-btn').addEventListener('click', renderModeSelect);
 
-  rankingBtn.addEventListener('click', renderRanking);
+  rankingBtn.addEventListener('click', () => renderRanking(currentMode));
 
-  async function renderRanking() {
+  async function renderRanking(activeModo) {
+    activeModo = activeModo || currentMode;
     main.innerHTML = `<p class="hint">${t('loadingRanking')}</p>`;
-    const { data, error } = await supabaseClient.rpc('get_leaderboard', { limit_count: 20 });
+    const { data, error } = await supabaseClient.rpc('get_leaderboard_by_mode', { modo_param: activeModo, limit_count: 20 });
     const rows = (data || []);
 
     const rowsHtml = rows.map((r, i) => {
@@ -914,14 +924,33 @@
       `;
     }).join('');
 
+    const tabsHtml = MODES.map(m => {
+      const isActive = m.id === activeModo;
+      const mName = lang === 'en' ? m.name_en : m.name;
+      return `
+        <button class="ranking-tab" data-modo="${m.id}" style="
+          flex:1; padding:8px 4px; border:none; border-radius:11px; cursor:pointer;
+          background:${isActive ? 'var(--card)' : 'transparent'};
+          box-shadow:${isActive ? '0 2px 6px -2px rgba(43,37,33,.2)' : 'none'};
+          font:700 11.5px 'Hanken Grotesk'; color:${isActive ? m.accent : 'rgba(43,37,33,.45)'};
+        ">${mName}</button>
+      `;
+    }).join('');
+
     main.innerHTML = `
       <div class="home-title" style="font-size:21px;">${t('rankingTitle')}</div>
       <p class="hint">${t('rankingHint')}</p>
-      <div style="display:flex; flex-direction:column; gap:8px; width:100%; margin-top:6px; max-height:56vh; overflow-y:auto;">
+      <div style="display:flex; gap:5px; width:100%; background:var(--sand); border-radius:13px; padding:4px; margin-top:10px;">
+        ${tabsHtml}
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; width:100%; margin-top:10px; max-height:50vh; overflow-y:auto;">
         ${rowsHtml || `<p class="hint">${t('noRanking')}</p>`}
       </div>
       <button class="primary-btn dark" id="ranking-back-btn">${t('back')}</button>
     `;
+    document.querySelectorAll('.ranking-tab').forEach(btn => {
+      btn.addEventListener('click', () => renderRanking(btn.dataset.modo));
+    });
     document.getElementById('ranking-back-btn').addEventListener('click', renderHome);
   }
 
@@ -1205,12 +1234,12 @@
           </div>
           <div class="divider"></div>
           <div class="seg">
-            <div class="seg-number">${Number(player.rating).toFixed(2)}</div>
+            <div class="seg-number">${Number(modeStats.rating).toFixed(2)}</div>
             <div class="stars-row" style="margin:0;">${Array.from({length:5}, () => starSVG(true, 11)).join('')}</div>
           </div>
           <div class="divider"></div>
           <div class="seg">
-            <div class="seg-number">${player.total_reviews}</div>
+            <div class="seg-number">${modeStats.total_reviews}</div>
             <div class="seg-sub">${t('partidas')}</div>
           </div>
         </div>`;
@@ -1218,32 +1247,32 @@
     return `
       <div class="review-badge">
         <div class="seg">
-          <div class="seg-number">${Number(player.rating).toFixed(2)}</div>
-          <div class="stars-row" style="margin:0;">${Array.from({length:5}, (_,i) => starSVG(i < Math.round(player.rating), 12)).join('')}</div>
+          <div class="seg-number">${Number(modeStats.rating).toFixed(2)}</div>
+          <div class="stars-row" style="margin:0;">${Array.from({length:5}, (_,i) => starSVG(i < Math.round(modeStats.rating), 12)).join('')}</div>
         </div>
         <div class="divider"></div>
         <div class="seg">
-          <div class="seg-number">${player.total_reviews}</div>
+          <div class="seg-number">${modeStats.total_reviews}</div>
           <div class="seg-sub">${t('partidas')}</div>
         </div>
       </div>`;
   }
 
-  // ====== FIN DE PARTIDA: la ronda completa es la "reseña" (0 a ROUND_LENGTH estrellas) ======
+  // ====== FIN DE PARTIDA: la ronda completa es la "reseña" (0 a ROUND_LENGTH estrellas), por Modo ======
   async function finishRound() {
     const roundStars = roundCorrect; // 0 a 5, una estrella por pregunta acertada
-    const oldRating = Number(player.rating);
-    const oldRounds = player.total_reviews;
+    const oldRating = Number(modeStats.rating);
+    const oldRounds = modeStats.total_reviews;
     const newRounds = oldRounds + 1;
     const newRating = ((oldRating * oldRounds) + roundStars) / newRounds;
     const ratingDelta = oldRounds > 0 ? newRating - oldRating : 0;
     const wasPerfect = roundStars === ROUND_LENGTH;
 
-    player.rating = newRating;
-    player.total_reviews = newRounds;
     const nowIso = new Date().toISOString();
-    player.last_played_at = nowIso;
-    await supabaseClient.from('players').update({ rating: newRating, total_reviews: newRounds, last_played_at: nowIso }).eq('id', player.id);
+    modeStats = { rating: newRating, total_reviews: newRounds };
+    await supabaseClient.from('player_stats').upsert({
+      player_id: player.id, modo: currentMode, rating: newRating, total_reviews: newRounds, last_played_at: nowIso
+    }, { onConflict: 'player_id,modo' });
 
     const deltaClass = ratingDelta >= 0 ? 'up' : 'down';
     const deltaSign = ratingDelta >= 0 ? '+' : '';
