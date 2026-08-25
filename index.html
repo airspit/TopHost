@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-<title>HeyRule — El primer juego del mundo para hosts</title>
+<title>Howtiq — El primer juego del mundo para hosts</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -199,7 +199,7 @@
     <span style="width:36px; height:36px; border-radius:11px; overflow:hidden; display:flex; align-items:center; justify-content:center; flex:none;">
       <img src="android-chrome-192x192.png" alt="Keeper" style="width:100%; height:100%; object-fit:cover; display:block;" />
     </span>
-    <span>HeyRule</span>
+    <span>Howtiq</span>
   </div>
   <div style="display:flex; gap:8px;">
     <button class="icon-btn" id="mode-badge-btn" style="display:none; padding:4px;" title=""></button>
@@ -396,7 +396,7 @@
   };
 
   // ====== Traducciones de interfaz (i18n) ======
-  let lang = (typeof localStorage !== 'undefined' && localStorage.getItem('heyrule_lang')) || 'es';
+  let lang = (typeof localStorage !== 'undefined' && localStorage.getItem('howtiq_lang')) || 'es';
 
   const I18N = {
     es: {
@@ -467,7 +467,7 @@
       rankingBtnTitle: 'Ranking',
       sourcesBtnTitle: 'Fuentes',
       sourcesTitle: 'Fuentes',
-      sourcesBody: 'Todas las preguntas de HeyRule están basadas en documentación oficial de la plataforma, incluyendo: Condiciones de Servicio, Política de Privacidad, Políticas de la comunidad, Política contra la discriminación, Estándares para anfitriones, Políticas de cancelación, Políticas de contenido, Verificación de identidad, Registro de usuarios y anfitriones, Protección para anfitriones, Seguridad, Pagos, Coanfitriones y Centro de Recursos para Anfitriones.<br><br>El contenido se actualiza todo el tiempo y se reescribe para el formato de juego, pero no es una IA improvisando: cada pregunta está anclada en documentación oficial real y verificable, no en lo que un chatbot cree recordar sobre la plataforma.'
+      sourcesBody: 'Todas las preguntas de Howtiq están basadas en documentación oficial de la plataforma, incluyendo: Condiciones de Servicio, Política de Privacidad, Políticas de la comunidad, Política contra la discriminación, Estándares para anfitriones, Políticas de cancelación, Políticas de contenido, Verificación de identidad, Registro de usuarios y anfitriones, Protección para anfitriones, Seguridad, Pagos, Coanfitriones y Centro de Recursos para Anfitriones.<br><br>El contenido se actualiza todo el tiempo y se reescribe para el formato de juego, pero no es una IA improvisando: cada pregunta está anclada en documentación oficial real y verificable, no en lo que un chatbot cree recordar sobre la plataforma.'
     },
     en: {
       eyebrow: "The world's first game for hosts",
@@ -537,7 +537,7 @@
       rankingBtnTitle: 'Ranking',
       sourcesBtnTitle: 'Sources',
       sourcesTitle: 'Sources',
-      sourcesBody: "Every question in HeyRule is based on the platform's official documentation, including: Terms of Service, Privacy Policy, Community Policies, Nondiscrimination Policy, Host Standards, Cancellation Policies, Content Policies, Identity Verification, Guest and Host Registration, Host Protection, Safety, Payments, Co-Hosting, and the Resource Center for Hosts.<br><br>The content gets updated constantly and gets rewritten for the game format, but this isn't an AI improvising: every question is anchored in real, verifiable official documentation — not in whatever a chatbot thinks it remembers about the platform."
+      sourcesBody: "Every question in Howtiq is based on the platform's official documentation, including: Terms of Service, Privacy Policy, Community Policies, Nondiscrimination Policy, Host Standards, Cancellation Policies, Content Policies, Identity Verification, Guest and Host Registration, Host Protection, Safety, Payments, Co-Hosting, and the Resource Center for Hosts.<br><br>The content gets updated constantly and gets rewritten for the game format, but this isn't an AI improvising: every question is anchored in real, verifiable official documentation — not in whatever a chatbot thinks it remembers about the platform."
     }
   };
 
@@ -545,7 +545,7 @@
 
   function setLang(l) {
     lang = l;
-    try { localStorage.setItem('heyrule_lang', l); } catch (e) {}
+    try { localStorage.setItem('howtiq_lang', l); } catch (e) {}
     renderPresentation();
   }
 
@@ -638,15 +638,15 @@
     const mode = MODES.find(m => m.id === currentMode) || MODES[0];
     const modeName = lang === 'en' ? mode.name_en : mode.name;
 
-    // wordmark HeyRule
+    // wordmark Howtiq
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.font = "800 56px 'Baloo 2'";
     ctx.fillStyle = '#2B2521';
-    ctx.fillText('Hey', 80, 150);
-    const heyW = ctx.measureText('Hey').width;
+    ctx.fillText('How', 80, 150);
+    const howW = ctx.measureText('How').width;
     ctx.fillStyle = '#FF385C';
-    ctx.fillText('Rule', 80 + heyW, 150);
+    ctx.fillText('tiq', 80 + howW, 150);
 
     // badge de Modo, arriba a la derecha — solo ícono + nombre, sin categoría
     ctx.font = "700 30px 'Hanken Grotesk'";
@@ -709,10 +709,10 @@
     ctx.fillText(ctaText, W / 2, ctaY + ctaH / 2 + 13);
     y = ctaY + ctaH + 64;
 
-    // heyrule.com — es la puerta real de entrada al juego
+    // howtiq.com — es la puerta real de entrada al juego
     ctx.font = "700 32px 'Hanken Grotesk'";
     ctx.fillStyle = 'rgba(43,37,33,.55)';
-    ctx.fillText('heyrule.com', W / 2, y);
+    ctx.fillText('howtiq.com', W / 2, y);
 
     return canvas;
   }
@@ -725,15 +725,15 @@
       const canvas = await buildShareCard(type);
       canvas.toBlob(async (blob) => {
         if (!blob) { btnEl.textContent = originalText; btnEl.disabled = false; return; }
-        const file = new File([blob], 'heyrule.png', { type: 'image/png' });
+        const file = new File([blob], 'howtiq.png', { type: 'image/png' });
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
-            await navigator.share({ files: [file], title: 'HeyRule' });
+            await navigator.share({ files: [file], title: 'Howtiq' });
           } catch (e) { /* el usuario canceló el share nativo, no hacemos nada */ }
         } else {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = url; a.download = 'heyrule.png';
+          a.href = url; a.download = 'howtiq.png';
           document.body.appendChild(a); a.click(); document.body.removeChild(a);
           URL.revokeObjectURL(url);
         }
@@ -773,7 +773,7 @@
   }
 
   function getModeKey() {
-    return player ? `heyrule_mode_${player.id}` : null;
+    return player ? `howtiq_mode_${player.id}` : null;
   }
   function loadSavedMode() {
     const key = getModeKey();
@@ -881,7 +881,7 @@
           <div style="display:flex; align-items:center; gap:6px; font:600 10.5px 'Hanken Grotesk'; color:rgba(43,37,33,.35);">
             <a href="https://www.arturoblas.com" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">${t('createdBy')} Arturo Blas</a>
             <span style="opacity:.6;">·</span>
-            <span>HeyRule™ © 2026</span>
+            <span>Howtiq™ © 2026</span>
           </div>
           ${session ? `
             <div style="width:100%; max-width:200px; display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:2px;">
@@ -1026,7 +1026,7 @@
     const input = document.getElementById('nickname-input');
     const errorDiv = document.getElementById('nickname-error');
     const submitBtn = document.getElementById('nickname-submit-btn');
-    const RESERVED_NICKNAMES = ['tophost', 'tophostfun', 'superhost', 'airbnb', 'heyrule', 'keeper'];
+    const RESERVED_NICKNAMES = ['tophost', 'tophostfun', 'superhost', 'airbnb', 'heyrule', 'howtiq', 'keeper'];
 
     submitBtn.addEventListener('click', async () => {
       errorDiv.textContent = '';
