@@ -663,15 +663,12 @@
     const mode = MODES.find(m => m.id === currentMode) || MODES[0];
     const modeName = lang === 'en' ? mode.name_en : mode.name;
 
-    // wordmark Howtiq
+    // wordmark Howtiq — todo en un mismo color, como en el encabezado del juego
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.font = "800 56px 'Baloo 2'";
     ctx.fillStyle = '#2B2521';
-    ctx.fillText('How', 80, 150);
-    const howW = ctx.measureText('How').width;
-    ctx.fillStyle = '#FF385C';
-    ctx.fillText('tiq', 80 + howW, 150);
+    ctx.fillText('Howtiq', 80, 150);
 
     // badge de Modo, arriba a la derecha — solo ícono + nombre, sin categoría
     ctx.font = "700 30px 'Hanken Grotesk'";
