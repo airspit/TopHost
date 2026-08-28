@@ -435,6 +435,9 @@
       rightsReserved: 'Todos los derechos reservados.',
       shareCta: 'Jugá vos también',
       shareBtn: 'Compartir logro',
+      shareBtnPlain: 'Compartir',
+      competeHeadline: 'Compitiendo para ser mejor anfitrión',
+      competeSub: 'Jugando howtiq',
       generatingCard: 'Generando...',
       ratingLabel: 'rating de host',
       roundLabel: 'Ronda',
@@ -505,6 +508,9 @@
       rightsReserved: 'All rights reserved.',
       shareCta: 'Play it too',
       shareBtn: 'Share achievement',
+      shareBtnPlain: 'Share',
+      competeHeadline: 'Competing to become a better host',
+      competeSub: 'Playing howtiq',
       generatingCard: 'Generating...',
       ratingLabel: 'host rating',
       roundLabel: 'Round',
@@ -612,6 +618,25 @@
     });
   }
 
+  // Parte un texto en varias líneas centradas si excede maxWidth, dibujando cada línea con ctx.fillText
+  function wrapCenteredText(ctx, text, cx, startY, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    const lines = [];
+    let current = '';
+    for (const word of words) {
+      const test = current ? `${current} ${word}` : word;
+      if (ctx.measureText(test).width > maxWidth && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = test;
+      }
+    }
+    if (current) lines.push(current);
+    lines.forEach((line, i) => ctx.fillText(line, cx, startY + i * lineHeight));
+    return lines.length;
+  }
+
   function roundRectPath(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -665,7 +690,7 @@
     ctx.fillText(modeName, chipX + chipPad + chipDot + 14, chipY + chipH / 2 + 11);
 
     // Keeper festejando, grande y centrado
-    const keeperPose = type === 'perfect' ? 'nivel' : 'racha';
+    const keeperPose = type === 'perfect' ? 'nivel' : (type === 'favorite' ? 'racha' : 'correcto');
     const keeper = await loadImageAsync(`keeper-${keeperPose}.png`);
     if (keeper) {
       const kW = 620;
@@ -685,7 +710,7 @@
       ctx.fillStyle = '#2B2521';
       ctx.fillText(`${roundCorrect}/${ROUND_LENGTH}`, W / 2, y);
       y += 130;
-    } else {
+    } else if (type === 'favorite') {
       ctx.font = "700 34px 'Hanken Grotesk'";
       ctx.fillStyle = '#8A7A5C';
       ctx.fillText('★ ' + Number(modeStats.rating).toFixed(2) + ' — ' + t('ratingLabel'), W / 2, y);
@@ -694,6 +719,16 @@
       ctx.fillStyle = '#FF385C';
       ctx.fillText(t('favWithHosts'), W / 2, y);
       y += 110;
+    } else {
+      // tarjeta genérica: sin puntaje, foco en la identidad de "estoy compitiendo"
+      ctx.font = "700 34px 'Hanken Grotesk'";
+      ctx.fillStyle = '#8A7A5C';
+      ctx.fillText(t('competeSub'), W / 2, y);
+      y += 100;
+      ctx.font = "800 62px 'Baloo 2'";
+      ctx.fillStyle = '#FF385C';
+      wrapCenteredText(ctx, t('competeHeadline'), W / 2, y, 820, 72);
+      y += 190;
     }
 
     // botón CTA "Jugá vos también"
@@ -1456,8 +1491,9 @@
       footerHint = t('raiseRating')(FAVORITE_MIN_RATING.toFixed(2));
     }
 
-    const showShare = wasPerfect || isFavorito;
-    const shareType = wasPerfect ? 'perfect' : 'favorite';
+    const showShare = true;
+    const shareType = wasPerfect ? 'perfect' : (isFavorito ? 'favorite' : 'compete');
+    const shareLabel = shareType === 'compete' ? t('shareBtnPlain') : t('shareBtn');
 
     main.innerHTML = `
       <div class="result-tag" style="color:${wasPerfect ? '#3F9A40' : (roundStars === 0 ? 'var(--c-reservas)' : 'var(--ink)')}">${wasPerfect ? t('perfectRound') : t('roundOver')}</div>
@@ -1472,7 +1508,7 @@
       <button class="primary-btn cta" id="again-btn">${t('playAgain')}</button>
       ${showShare ? `<button class="primary-btn dark" id="share-btn" style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>
-        ${t('shareBtn')}
+        ${shareLabel}
       </button>` : ''}
     `;
     document.getElementById('again-btn').addEventListener('click', startNewRound);
